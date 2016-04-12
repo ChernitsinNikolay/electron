@@ -21,8 +21,12 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     qlibs/qtreemodel.cpp \
-    libs/containers/tree.cpp
+    libs/containers/tree.cpp \
+    components/electroniccomponent.cpp \
+    models/electroniccomponentsmodel.cpp
 
 HEADERS  += mainwindow.h \
     qlibs/qtreemodel.h \
-    libs/containers/tree.h
+    libs/containers/tree.h \
+    components/electroniccomponent.h \
+    models/electroniccomponentsmodel.h

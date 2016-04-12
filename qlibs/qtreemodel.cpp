@@ -1,46 +1,10 @@
 #include "qtreemodel.h"
-#include <QFileInfo>
-#include <QDir>
-#include <algorithm>
-#include <QFileIconProvider>
-#include <QDateTime>
-#include <QDebug>
 
 QTreeModel::QTreeModel(QObject *parent) :
     QAbstractItemModel(parent),
-    _metaProvider(new QFileIconProvider())
+    ElectronicComponentsModel()
 {
-    fetchRootDirectory();
 }
-
-struct QTreeModel::NodeInfo
-{
-    NodeInfo():
-        parent(0),
-        mapped(false)
-    {}
-
-    NodeInfo(const QFileInfo& fileInfo, NodeInfo* parent = 0):
-        fileInfo(fileInfo),
-        parent(parent),
-        mapped(false)
-    {}
-
-    bool operator ==(const NodeInfo& another) const
-    {
-        bool r = this->fileInfo == another.fileInfo;
-        Q_ASSERT(!r || this->parent == another.parent);
-        Q_ASSERT(!r || this->mapped == another.mapped);
-        Q_ASSERT(!r || this->children == another.children);
-        return r;
-    }
-
-    QFileInfo fileInfo;
-    QVector<NodeInfo> children;
-    NodeInfo* parent;
-
-    bool mapped;
-};
 
 QTreeModel::~QTreeModel()
 {}
@@ -52,15 +16,14 @@ QModelIndex QTreeModel::index(int row, int column, const QModelIndex &parent) co
     }
 
     if (!parent.isValid()) {
-        Q_ASSERT(_nodes.size() > row);
-        return createIndex(row, column, const_cast<NodeInfo*>(&_nodes[row]));
+        Q_ASSERT((int)m_elcomps.size() > row);
+        return createIndex(row, column, m_elcomps[row]);
     }
 
-    NodeInfo* parentInfo = static_cast<NodeInfo*>(parent.internalPointer());
+    Tree<ElectronicComponent> *parentInfo = static_cast<Tree<ElectronicComponent>*>(parent.internalPointer());
     Q_ASSERT(parentInfo != 0);
-    Q_ASSERT(parentInfo->mapped);
-    Q_ASSERT(parentInfo->children.size() > row);
-    return createIndex(row, column, &parentInfo->children[row]);
+    Q_ASSERT((int)parentInfo->size() > row);
+    return createIndex(row, column, (*parentInfo)[row]);
 }
 
 QModelIndex QTreeModel::parent(const QModelIndex &child) const
@@ -69,203 +32,65 @@ QModelIndex QTreeModel::parent(const QModelIndex &child) const
         return QModelIndex();
     }
 
-    NodeInfo* childInfo = static_cast<NodeInfo*>(child.internalPointer());
+    Tree<ElectronicComponent>* childInfo = static_cast<Tree<ElectronicComponent>*>(child.internalPointer());
     Q_ASSERT(childInfo != 0);
-    NodeInfo* parentInfo = childInfo->parent;
-    if (parentInfo != 0) {
-        return createIndex(findRow(parentInfo), RamificationColumn, parentInfo);
-    }
-    else {
-        return QModelIndex();
-    }
+    Tree<ElectronicComponent>* parentInfo = childInfo->getParent();
+    if (parentInfo != 0 && parentInfo != &m_elcomps)
+        return createIndex(findRow(parentInfo), 0, parentInfo);
+    return QModelIndex();
 }
 
-int QTreeModel::findRow(const NodeInfo *nodeInfo) const
+int QTreeModel::findRow(const Tree<ElectronicComponent> *nodeInfo) const
 {
     Q_ASSERT(nodeInfo != 0);
-    const NodeInfoList& parentInfoChildren = nodeInfo->parent != 0 ? nodeInfo->parent->children: _nodes;
-    NodeInfoList::const_iterator position = qFind(parentInfoChildren, *nodeInfo);
-    Q_ASSERT(position != parentInfoChildren.end());
-    return std::distance(parentInfoChildren.begin(), position);
+    const Tree<ElectronicComponent>* parentInfoChildren = nodeInfo->getParent() != 0 ? nodeInfo->getParent(): &m_elcomps;
+    for(std::size_t i = 0; i < parentInfoChildren->size(); i++)
+        if(nodeInfo == (*parentInfoChildren)[i])
+            return i;
+    return 0;
 }
 
 int QTreeModel::rowCount(const QModelIndex &parent) const
 {
-    if (!parent.isValid()) {
-        return _nodes.size();
-    }
-    const NodeInfo* parentInfo = static_cast<const NodeInfo*>(parent.internalPointer());
+    if (!parent.isValid())
+        return m_elcomps.size();
+    const Tree<ElectronicComponent>* parentInfo = static_cast<const Tree<ElectronicComponent>*>(parent.internalPointer());
     Q_ASSERT(parentInfo != 0);
-
-    return parentInfo->children.size();
-}
-
-bool QTreeModel::hasChildren(const QModelIndex &parent) const
-{
-    if (parent.isValid()) {
-        const NodeInfo* parentInfo = static_cast<const NodeInfo*>(parent.internalPointer());
-        Q_ASSERT(parentInfo != 0);
-        if (!parentInfo->mapped) {
-            return true;//QDir(parentInfo->fileInfo.absoluteFilePath()).count() > 0;
-        }
-    }
-    return QAbstractItemModel::hasChildren(parent);
+    return parentInfo->size();
 }
 
 int QTreeModel::columnCount(const QModelIndex &parent) const
 {
-    Q_UNUSED(parent)
-    return ColumnCount;
+    Q_UNUSED(parent);
+    return 1;
 }
 
 QVariant QTreeModel::data(const QModelIndex &index, int role) const
 {
-    if (!index.isValid()) {
+    if (!index.isValid())
         return QVariant();
-    }
-
-    const NodeInfo* nodeInfo = static_cast<NodeInfo*>(index.internalPointer());
-    const QFileInfo& fileInfo = nodeInfo->fileInfo;
+    const Tree<ElectronicComponent>* nodeInfo = static_cast<Tree<ElectronicComponent>*>(index.internalPointer());
     Q_ASSERT(nodeInfo != 0);
-
-    switch (index.column()) {
-    case NameColumn:
-        return nameData(fileInfo, role);
-    case ModificationDateColumn:
-        if (role == Qt::DisplayRole) {
-            return fileInfo.lastModified();
-        }
-        break;
-    case SizeColumn:
-        if (role == Qt::DisplayRole) {
-            return fileInfo.isDir()? QVariant(): fileInfo.size();
-        }
-        break;
-    case TypeColumn:
-        if (role == Qt::DisplayRole) {
-            return _metaProvider->type(fileInfo);
-        }
-        break;
-    default:
-        break;
-    }
-    return QVariant();
+    return nameData(*nodeInfo, role);
 }
 
-QVariant QTreeModel::nameData(const QFileInfo &fileInfo, int role) const
+QVariant QTreeModel::nameData(const Tree<ElectronicComponent> &nodeInfo, int role) const
 {
     switch (role) {
     case Qt::EditRole:
-        return fileInfo.fileName();
     case Qt::DisplayRole:
-        if (fileInfo.isRoot()) {
-            return fileInfo.absoluteFilePath();
-        }
-        else if (fileInfo.isDir()){
-            return fileInfo.fileName();
-        }
-        else {
-            return fileInfo.completeBaseName();
-        }
-    case Qt::DecorationRole:
-        return _metaProvider->icon(fileInfo);
+        return QString::fromStdString(nodeInfo.value().getName());
     default:
         return QVariant();
     }
     Q_UNREACHABLE();
 }
 
-bool QTreeModel::setData(const QModelIndex &index, const QVariant &value, int role)
-{
-    if (!index.isValid()) {
-        return false;
-    }
-    if (role != Qt::EditRole) {
-        return false;
-    }
-    if (index.column() != NameColumn) {
-        return false;
-    }
-
-    QString newName = value.toString();
-    if (newName.contains('/') || newName.contains(QDir::separator())) {
-        return false;
-    }
-    NodeInfo* nodeInfo = static_cast<NodeInfo*>(index.internalPointer());
-    QString fullNewName = nodeInfo->fileInfo.absoluteDir().path() +"/" + newName;
-    QString fullOldName = nodeInfo->fileInfo.absoluteFilePath();
-    qDebug() << fullOldName << fullNewName;
-    bool renamed = QFile::rename(fullOldName, fullNewName);
-    qDebug() << renamed;
-    if (renamed) {
-        nodeInfo->fileInfo = QFileInfo(fullNewName);
-        emit dataChanged(index, index.sibling(index.row(), ColumnCount));
-    }
-    return renamed;
-}
-
 QVariant QTreeModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-    const QStringList headers = {"Имя", "Дата изменения", "Размер", "Тип"};
+    const QStringList headers = {"Элементы"};
     if (orientation == Qt::Horizontal && role == Qt::DisplayRole && section < headers.size()) {
         return headers[section];
     }
     return QVariant();
-}
-
-bool QTreeModel::canFetchMore(const QModelIndex &parent) const
-{
-    if (!parent.isValid()) {
-        return false;
-    }
-
-    const NodeInfo* parentInfo = static_cast<const NodeInfo*>(parent.internalPointer());
-    Q_ASSERT(parentInfo != 0);
-    return !parentInfo->mapped;
-}
-
-void QTreeModel::fetchMore(const QModelIndex &parent)
-{
-    Q_ASSERT(parent.isValid());
-    NodeInfo* parentInfo = static_cast<NodeInfo*>(parent.internalPointer());
-    Q_ASSERT(parentInfo != 0);
-    Q_ASSERT(!parentInfo->mapped);
-
-    const QFileInfo& fileInfo = parentInfo->fileInfo;
-    Q_ASSERT(fileInfo.isDir());
-
-    QDir dir = QDir(fileInfo.absoluteFilePath());
-    QFileInfoList children = dir.entryInfoList(QStringList(), QDir::AllEntries | QDir::NoDotAndDotDot, QDir::Name);
-
-    int insrtCnt = children.size() - 1;
-    if (insrtCnt < 0) {
-        insrtCnt = 0;
-    }
-    beginInsertRows(parent, 0, insrtCnt);
-    parentInfo->children.reserve(children.size());
-    for (const QFileInfo& entry: children) {
-        NodeInfo nodeInfo(entry, parentInfo);
-        nodeInfo.mapped = !entry.isDir();
-        parentInfo->children.push_back(std::move(nodeInfo));
-    }
-    parentInfo->mapped = true;
-    endInsertRows();
-}
-
-void QTreeModel::fetchRootDirectory()
-{
-    const QFileInfoList drives = QDir::drives();
-    qCopy(drives.begin(), drives.end(), std::back_inserter(_nodes));
-}
-
-Qt::ItemFlags QTreeModel::flags(const QModelIndex &index) const
-{
-    Qt::ItemFlags flags = QAbstractItemModel::flags(index);
-    if (index.isValid() && index.column() == NameColumn) {
-        const NodeInfo* nodeInfo = static_cast<const NodeInfo*>(index.internalPointer());
-        if (!nodeInfo->fileInfo.isRoot()) {
-            flags |= Qt::ItemIsEditable;
-        }
-    }
-    return flags;
 }

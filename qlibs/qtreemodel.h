@@ -2,12 +2,10 @@
 #define QTREEMODEL_H
 
 #include <QAbstractItemModel>
-#include <QVector>
 
-class QFileIconProvider;
-class QFileInfo;
+#include "models/electroniccomponentsmodel.h"
 
-class QTreeModel : public QAbstractItemModel
+class QTreeModel : public QAbstractItemModel, ElectronicComponentsModel
 {
     Q_OBJECT
 public:
@@ -21,36 +19,12 @@ public:
     int columnCount(const QModelIndex &parent) const;
 
     QVariant data(const QModelIndex &index, int role) const;
-    bool setData(const QModelIndex &index, const QVariant &value, int role);
 
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
 
-    bool canFetchMore(const QModelIndex &parent) const;
-    void fetchMore(const QModelIndex &parent);
-
-    Qt::ItemFlags flags(const QModelIndex &index) const;
-
-    bool hasChildren(const QModelIndex &parent) const;
-
 private:
-    enum Columns
-    {
-        RamificationColumn,
-        NameColumn = RamificationColumn,
-        ModificationDateColumn,
-        SizeColumn,
-        TypeColumn,
-        ColumnCount
-    };
-
-    struct NodeInfo;
-    typedef QVector<NodeInfo> NodeInfoList;
-    NodeInfoList _nodes;
-    QScopedPointer<QFileIconProvider> _metaProvider;
-
-    void fetchRootDirectory();
-    int findRow(const NodeInfo* nodeInfo) const;
-    QVariant nameData(const QFileInfo& fileInfo, int role) const;
+    int findRow(const Tree<ElectronicComponent>* nodeInfo) const;
+    QVariant nameData(const Tree<ElectronicComponent> &nodeInfo, int role) const;
 };
 
 #endif // QTREEMODEL_H

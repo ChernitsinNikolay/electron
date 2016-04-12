@@ -6,36 +6,64 @@
 template <class T>
 class Tree
 {
+    //typedef typename std::vector<Tree<T>*> pTypeT;
 public:
     explicit Tree();
+    explicit Tree(const Tree<T> &tree);
+
     virtual ~Tree();
 
-    void addChildren(const Tree<T> &tree);
-    void setValue(const T &value);
+    void setParent(Tree<T> *tree)
+    { parent = tree; }
 
-    Tree<T> operator[](size_t idx)
-    { return *p_childrens[idx]; }
+    void addChildren(const Tree<T> &tree)
+    { Tree<T> *temp = new Tree<T>(tree); temp->setParent(this); m_childrens.push_back(temp); }
+
+    void setValue(const T &value)
+    { m_value = new T(value); }
+
+    Tree<T> *operator[](std::size_t idx) const
+    { return m_childrens[idx]; }
+
+    Tree<T> *getParent() const
+    { return parent; }
 
     std::size_t size() const
-    { return p_childrens.size(); }
+    { return m_childrens.size(); }
+
+    const T &value() const { return *m_value; }
 
 private:
-    std::vector<Tree<T>*> p_childrens;
-    T *p_value;
+    Tree<T> *parent;
+    std::vector<Tree<T>*> m_childrens;
+    T *m_value;
 };
 
 template <class T>
 Tree<T>::Tree()
 {
-    p_value = 0;
+    m_value = 0;
+    parent = 0;
 }
 
 template <class T>
 Tree<T>::~Tree()
 {
-    for(std::iterator<Tree<T>*> iter = p_childrens.begin(); iter != p_childrens.end(); iter++)
-        delete *iter;
-    delete p_value;
+    /*for(pTypeT::iterator iter = m_childrens.begin(); iter != m_childrens.end(); iter++)
+        delete (*iter);
+    delete m_value;*/
+}
+
+template <class T>
+Tree<T>::Tree(const Tree<T> &tree)
+{
+    m_value = tree.m_value;
+    parent = tree.parent;
+    for(std::size_t i = 0; i < tree.m_childrens.size(); i++) {
+        Tree<T> *temp = new Tree<T>(*tree.m_childrens[i]);
+        temp->setParent(this);
+        m_childrens.push_back(temp);
+    }
 }
 
 #endif // TREE_H
