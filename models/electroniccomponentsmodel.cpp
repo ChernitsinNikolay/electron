@@ -52,7 +52,9 @@ void ElectronicComponentsModel::fetchAllComponents()
                 tstack.push(ttree);
                 ttree = new Tree<ElectronicComponent>();
                 ElectronicComponent ec;
-                ec.setName(*iter);
+                std::size_t found = (*iter).find("name=\"") + 6;
+                std::size_t efound = (*iter).find("\"", found) - found;
+                ec.setName((*iter).substr(found, efound));
                 ttree->setValue(ec);
             } else if ((std::string(*iter)).compare(0, 10, "</element>") == 0) {
                 Tree<ElectronicComponent> *temp = tstack.top();
