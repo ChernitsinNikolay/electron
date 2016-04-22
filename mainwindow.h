@@ -1,31 +1,19 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QWidget>
-#include <QGraphicsView>
-#include <QPushButton>
+#include <QMainWindow>
 #include <QTreeView>
+#include <QPushButton>
 
-class MainWindow : public QWidget
+class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent);
+    MainWindow(QWidget *parent = 0);
+    ~MainWindow();
 private:
     QTreeView *TreeV;
 };
 
-class ElemWidget : public QWidget
-{
-    Q_OBJECT
-public:
-    explicit ElemWidget(QWidget *parent = 0);
-private:
-    QPushButton *RotLeft;
-    QPushButton *RotRight;
-    QPushButton *RefX;
-    QPushButton *RefY;
-    QGraphicsView *graphicsView;
-};
 #endif // MAINWINDOW_H

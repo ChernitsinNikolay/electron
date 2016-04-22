@@ -1,36 +1,12 @@
 #include "mainwindow.h"
+#include "elemwidget.h"
 #include <QSplitter>
 #include <QLayout>
-#include <QMenu>
+#include <QWidget>
 
-ElemWidget::ElemWidget(QWidget *parent) : QWidget(parent)
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent)
 {
-    RotLeft = new QPushButton("RotL");
-    RotRight = new QPushButton("RotR");
-    RefX = new QPushButton("RefX");
-    RefY = new QPushButton("RefY");
-
-    graphicsView = new QGraphicsView;
-
-    QVBoxLayout *BtmLayout = new QVBoxLayout;
-    BtmLayout->setMargin(0);
-    BtmLayout->addWidget(RotLeft);
-    BtmLayout->addWidget(RotRight);
-    BtmLayout->addWidget(RefX);
-    BtmLayout->addWidget(RefY);
-
-    QHBoxLayout *ElemLayout = new QHBoxLayout;
-    ElemLayout->setMargin(0);
-    ElemLayout->addLayout(BtmLayout);
-    ElemLayout->addWidget(graphicsView);
-
-    setLayout(ElemLayout);
-}
-
-MainWindow::MainWindow(QWidget *parent): QWidget(parent)
-{
-
-
     ElemWidget *Elem = new ElemWidget;
 
     TreeV = new QTreeView;
@@ -42,7 +18,13 @@ MainWindow::MainWindow(QWidget *parent): QWidget(parent)
 
     QVBoxLayout *generalLayout = new QVBoxLayout;
     generalLayout->addWidget(VSplt);
-    setLayout(generalLayout);
 
+    QWidget *widg = new QWidget;
+    widg ->setLayout(generalLayout);
+    setCentralWidget(widg);
 }
 
+MainWindow::~MainWindow()
+{
+
+}
