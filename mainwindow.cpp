@@ -11,13 +11,14 @@ MainWindow::MainWindow(QWidget *parent)
 
     TreeV = new QTreeView;
 
-    QSplitter *VSplt = new QSplitter;
-    VSplt->setOrientation(Qt::Vertical);
-    VSplt->addWidget(TreeV);
-    VSplt->addWidget(Elem);
+   // QSplitter *VSplt = new QSplitter;
+   // VSplt->setOrientation(Qt::Vertical);
+   // VSplt->addWidget(TreeV);
+   // VSplt->addWidget(Elem);
 
     QVBoxLayout *generalLayout = new QVBoxLayout;
-    generalLayout->addWidget(VSplt);
+    generalLayout->addWidget(TreeV);
+    generalLayout->addWidget(Elem);
 
     QWidget *widg = new QWidget;
     widg ->setLayout(generalLayout);
