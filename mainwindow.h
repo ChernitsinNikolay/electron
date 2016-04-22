@@ -1,6 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <elemwidget.h>
 #include <QMainWindow>
 #include <QTreeView>
 #include <QPushButton>
@@ -14,6 +15,7 @@ public:
     ~MainWindow();
 private:
     QTreeView *TreeV;
+    ElemWidget *Elem;
 };
 
 #endif // MAINWINDOW_H

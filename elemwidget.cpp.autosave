@@ -26,8 +26,5 @@ ElemWidget::ElemWidget(QWidget *parent) : QWidget(parent)
     ElemLayout->addWidget(graphicsView);
 
     setLayout(ElemLayout);
-/*
-    QWidget *ElWidg = new QWidget;
-    ElWidg ->setLayout(ElemLayout);
-    setCentralWidget(ElWidg);*/
+
 }

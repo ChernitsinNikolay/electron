@@ -5,11 +5,11 @@
 #include <QGraphicsView>
 #include <QPushButton>
 
-class ElemWidget : public QMainWindow
+class ElemWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit ElemWidget(QMainWindow *parent = 0);
+    explicit ElemWidget(QWidget *parent = 0);
 private:
     QPushButton *RotLeft;
     QPushButton *RotRight;
