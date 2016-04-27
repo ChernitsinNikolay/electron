@@ -5,6 +5,7 @@
 #include <QMainWindow>
 #include <QTreeView>
 #include <QPushButton>
+#include <QGraphicsView>
 
 class MainWindow : public QMainWindow
 {
@@ -15,6 +16,7 @@ public:
     ~MainWindow();
 private:
     QTreeView *TreeV;
+    QGraphicsView *Scheme;
     ElemWidget *Elem;
 };
 

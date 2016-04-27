@@ -18,3 +18,8 @@ SOURCES += main.cpp\
 
 HEADERS  += mainwindow.h \
     elemwidget.h
+
+RESOURCES += \
+    images.qrc
+
+DISTFILES +=
