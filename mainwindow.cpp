@@ -47,11 +47,11 @@ MainWindow::~MainWindow()
 void MainWindow::setElectron(Electron *electron)
 {
     m_electron = electron;
-    tv->setModel(0);
+    TreeV->setModel(0);
     delete treeModel;
     delete preview;
     treeModel = new QTreeModel(this, m_electron->tree());
     preview = new QPreviewModel(this, electron);
-    tv->setModel(treeModel);
-    connect(tv->selectionModel(), SIGNAL(currentChanged(QModelIndex,QModelIndex)), preview, SLOT(currentChanged(QModelIndex,QModelIndex)));
+    TreeV->setModel(treeModel);
+    connect(TreeV->selectionModel(), SIGNAL(currentChanged(QModelIndex,QModelIndex)), preview, SLOT(currentChanged(QModelIndex,QModelIndex)));
 }
