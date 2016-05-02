@@ -13,6 +13,7 @@ ElectronicComponentsModel::ElectronicComponentsModel()
 
 void ElectronicComponentsModel::fetchAllComponents()
 {
+    uint64_t cntr = 0;
     //simple scan file
     std::ifstream db("ComponentBase.xml");
     if(!db.is_open()) {
@@ -36,8 +37,8 @@ void ElectronicComponentsModel::fetchAllComponents()
     db.close();
     //simple parse data by file
     //parse(vlex.begin(), vlex.end());
-    std::stack<Tree<ElectronicComponent>*> tstack;
-    Tree<ElectronicComponent> *ttree = &m_elcomps;
+    std::stack<ContainerType*> tstack;
+    ContainerType *ttree = &m_elcomps;
     int st = 0;
     for(std::vector<std::string>::iterator iter = vlex.begin(); iter != vlex.end(); iter++) {
         //std::cout<<">> "<<(std::string(*iter))<<std::endl;
@@ -50,14 +51,15 @@ void ElectronicComponentsModel::fetchAllComponents()
         case 1:     //Элемент
             if((std::string(*iter)).compare(0, 8, "<element") == 0) {
                 tstack.push(ttree);
-                ttree = new Tree<ElectronicComponent>();
-                ElectronicComponent ec;
+                ttree = new ContainerType();
+                ItemType ec;
                 std::size_t found = (*iter).find("name=\"") + 6;
                 std::size_t efound = (*iter).find("\"", found) - found;
                 ec.setName((*iter).substr(found, efound));
+                ec.setId(++cntr);
                 ttree->setValue(ec);
             } else if ((std::string(*iter)).compare(0, 10, "</element>") == 0) {
-                Tree<ElectronicComponent> *temp = tstack.top();
+                ContainerType *temp = tstack.top();
                 temp->addChildren(*ttree);
                 delete ttree;
                 ttree = temp;
@@ -68,4 +70,23 @@ void ElectronicComponentsModel::fetchAllComponents()
             break;
         }
     }
+}
+
+const ElectronicComponentsModel::ContainerType *ElectronicComponentsModel::findById(const uint64_t &id)
+{
+    return findById(id, &m_elcomps);
+}
+
+const ElectronicComponentsModel::ContainerType *ElectronicComponentsModel::findById(const uint64_t &id, const ContainerType *iter)
+{
+    for(size_t i = 0; i < iter->size(); i++) {
+        if((*iter)[i]->value().getId() == id)
+            return (*iter)[i];
+    }
+    for(size_t i = 0; i < iter->size(); i++) {
+        const ContainerType *titer = findById(id, (*iter)[i]);
+        if(titer)
+            return titer;
+    }
+    return NULL;
 }

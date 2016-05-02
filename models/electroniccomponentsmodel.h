@@ -5,17 +5,42 @@
 #include "libs/containers/tree.h"
 #include "components/electroniccomponent.h"
 
+
 class ElectronicComponentsModel
 {
 public:
-    explicit ElectronicComponentsModel();
+    ElectronicComponentsModel();
+
+    typedef ElectronicComponent ItemType;
+    typedef Tree<ItemType> ContainerType;
+
+    inline const size_t &size(const uint64_t &id = 0) {
+        if(!id)
+            return m_elcomps.size();
+        const ContainerType *iter = findById(id);
+        return iter ? iter->size() : 0;
+    }
+
+    inline const uint64_t &id(const uint64_t &parentId, const uint64_t &idx) {
+        if(!parentId && idx < m_elcomps.size())
+            return m_elcomps[idx]->value().getId();
+        const ContainerType *iter = findById(parentId);
+        return iter && idx < iter->size() ? (*iter)[idx]->value().getId() : 0;
+    }
+
+    inline std::string name(const uint64_t &id) {
+        if(!id)
+            return "";
+        const ContainerType *iter = findById(id);
+        return iter ? iter->value().getName() : "";
+    }
 
 private:
     void fetchAllComponents();
-    //std::vector::iterator parse(const std::vector<std::string>::iterator &start, const std::vector::iterator &end);
+    const ContainerType *findById(const uint64_t &id);
+    const ContainerType *findById(const uint64_t &id, const ContainerType *iter);
 
-protected:
-    Tree<ElectronicComponent> m_elcomps;
+    ContainerType m_elcomps;
 };
 
 #endif // ELECTRONICCOMPONENTSMODEL_H

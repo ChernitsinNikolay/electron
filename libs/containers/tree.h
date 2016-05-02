@@ -22,7 +22,7 @@ public:
     void setValue(const T &value)
     { m_value = new T(value); }
 
-    Tree<T> *operator[](std::size_t idx) const
+    const Tree<T> *operator[](std::size_t idx) const
     { return m_childrens[idx]; }
 
     Tree<T> *getParent() const

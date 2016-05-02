@@ -23,10 +23,12 @@ SOURCES += main.cpp\
     qlibs/qtreemodel.cpp \
     libs/containers/tree.cpp \
     components/electroniccomponent.cpp \
-    models/electroniccomponentsmodel.cpp
+    models/electroniccomponentsmodel.cpp \
+    models/appmodel.cpp
 
 HEADERS  += mainwindow.h \
     qlibs/qtreemodel.h \
     libs/containers/tree.h \
     components/electroniccomponent.h \
-    models/electroniccomponentsmodel.h
+    models/electroniccomponentsmodel.h \
+    models/appmodel.h
