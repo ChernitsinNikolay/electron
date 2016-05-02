@@ -5,26 +5,38 @@
 //#include "qlibs/qtreemodel.h"
 //#include "models/appmodel.h"
 #include <iostream>
+#include "elemwidget.h"
+#include <QLayout>
+#include <QWidget>
+#include <QSplitter>
+#include <QMenuBar>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), treeModel(0), preview(0)
 {
-    //AppModel *model = new AppModel();
-    tv = new QTreeView(this);
-    tv->setUniformRowHeights(true);
-    tv->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    //tv->setModel(new QTreeModel(this, model));
-    QGraphicsView *graphicsView = new QGraphicsView(this);
-    QVBoxLayout *vbl = new QVBoxLayout;
-    vbl->addWidget(tv);
-    vbl->addWidget(graphicsView);
-    QWidget *central = new QWidget(this);
-    central->setLayout(vbl);
-    setCentralWidget(central);
+    Elem = new ElemWidget;
+    Scheme = new QGraphicsView;
+    TreeV = new QTreeView(this);
+    TreeV->setUniformRowHeights(true);
+    TreeV->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-    QGraphicsScene *scene = new QGraphicsScene;
-    graphicsView->setScene(scene);
-    //scene->add
+    QMenu *file = menuBar()->addMenu("File");
+    QMenu *view = menuBar()->addMenu("View");
+    QMenu *edit = menuBar()->addMenu("Edit");
+
+    QVBoxLayout *generalLayout = new QVBoxLayout;
+    generalLayout->setMargin(0);
+    generalLayout->addWidget(TreeV);
+    generalLayout->addWidget(Elem);
+
+    QWidget *leftWidget = new QWidget;
+    leftWidget->setLayout(generalLayout);
+
+    QSplitter *mainSplitter = new QSplitter (Qt::Horizontal);
+    mainSplitter->addWidget(leftWidget);
+    mainSplitter->addWidget(Scheme);
+
+    setCentralWidget(mainSplitter);
 }
 
 MainWindow::~MainWindow()

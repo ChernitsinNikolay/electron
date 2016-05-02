@@ -1,12 +1,15 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <elemwidget.h>
 #include <QMainWindow>
 #include <QModelIndex>
 #include "components/electron.h"
 #include "qlibs/qtreemodel.h"
 #include "qlibs/qpreviewmodel.h"
 #include <QTreeView>
+#include <QPushButton>
+#include <QGraphicsView>
 
 class MainWindow : public QMainWindow
 {
@@ -23,7 +26,9 @@ private:
     Electron *m_electron;
     QTreeModel *treeModel;
     QPreviewModel *preview;
-    QTreeView *tv;
+    QTreeView *TreeV;
+    QGraphicsView *Scheme;
+    ElemWidget *Elem;
 };
 
 #endif // MAINWINDOW_H

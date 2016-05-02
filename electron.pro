@@ -26,7 +26,8 @@ SOURCES += main.cpp\
 #    models/appmodel.cpp \
     components/electron.cpp \
     components/electronelement.cpp \
-    qlibs/qpreviewmodel.cpp
+    qlibs/qpreviewmodel.cpp \
+    elemwidget.cpp
 
 HEADERS  += mainwindow.h \
     qlibs/qtreemodel.h \
@@ -37,4 +38,9 @@ HEADERS  += mainwindow.h \
 #    libs/containers/_tree.h \
     libs/containers/tree.h \
     components/electronelement.h \
-    qlibs/qpreviewmodel.h
+    qlibs/qpreviewmodel.h \
+    elemwidget.h
+
+RESOURCES += \
+    images.qrc
+
