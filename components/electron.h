@@ -11,12 +11,16 @@ class Electron
 public:
     Electron();
 
-    inline ElectronTree *tree() const { return m_tree; }
+    inline const ElectronTree *tree() const { return &m_tree; }
+
+    bool setCurrent(const ElectronItem &item);
+    inline const ElectronItem &current() const { return m_current; }
 
 private:
     bool xmlParse();
 
-    ElectronTree *m_tree;
+    ElectronItem m_current;
+    ElectronTree m_tree;
 };
 
 #endif // ELECTRON_H

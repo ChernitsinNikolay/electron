@@ -7,7 +7,7 @@
 #include <iostream>
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), treeModel(0)
+    : QMainWindow(parent), treeModel(0), preview(0)
 {
     //AppModel *model = new AppModel();
     tv = new QTreeView(this);
@@ -22,7 +22,6 @@ MainWindow::MainWindow(QWidget *parent)
     central->setLayout(vbl);
     setCentralWidget(central);
 
-    connect(tv->selectionModel(), SIGNAL(currentChanged(QModelIndex,QModelIndex)), SLOT(currentChanged(QModelIndex,QModelIndex)));
     QGraphicsScene *scene = new QGraphicsScene;
     graphicsView->setScene(scene);
     //scene->add
@@ -33,21 +32,14 @@ MainWindow::~MainWindow()
 
 }
 
-void MainWindow::currentChanged(QModelIndex old, QModelIndex current)
+void MainWindow::setElectron(Electron *electron)
 {
-    /*std::cout<<old.data().toString().toLocal8Bit().toStdString()<<"\t"<<old.data(QTreeModel::ItemReference).typeName()<<std::endl;
-    if(old.data(QTreeModel::ItemReference).canConvert(QMetaType::type("QTreeModel::QItemType"))) {
-        QTreeModel::QItemType type = qvariant_cast<QTreeModel::QItemType>(old.data(QTreeModel::ItemReference));
-        std::cout<<QString::fromUtf8(type.getName().c_str()).toLocal8Bit().toStdString()<<std::endl;
-        //std::cout<<old.data(Qt::UserRole).<<std::endl;
-    }*/
-    //old.internalPointer()
-}
-
-void MainWindow::setElectronTree(ElectronTree *tree)
-{
+    m_electron = electron;
     tv->setModel(0);
     delete treeModel;
-    treeModel = new QTreeModel(this, tree);
+    delete preview;
+    treeModel = new QTreeModel(this, m_electron->tree());
+    preview = new QPreviewModel(this, electron);
     tv->setModel(treeModel);
+    connect(tv->selectionModel(), SIGNAL(currentChanged(QModelIndex,QModelIndex)), preview, SLOT(currentChanged(QModelIndex,QModelIndex)));
 }

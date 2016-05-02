@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
     Electron electron;
 
     MainWindow w;
-    w.setElectronTree(electron.tree());
+    w.setElectron(&electron);
     w.show();
 
     return a.exec();

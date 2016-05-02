@@ -7,7 +7,6 @@
 
 Electron::Electron()
 {
-    m_tree = new ElectronTree();
     xmlParse();
 }
 
@@ -38,7 +37,7 @@ bool Electron::xmlParse()
 
     //simple parse data by file
     std::stack<ElectronTree*> tstack;
-    ElectronTree *ttree = m_tree;
+    ElectronTree *ttree = &m_tree;
     int st = 0;
     for(std::vector<std::string>::iterator iter = vlex.begin(); iter != vlex.end(); iter++) {
         switch(st) {
@@ -73,4 +72,10 @@ bool Electron::xmlParse()
         return true;
 
     return false;
+}
+
+bool Electron::setCurrent(const ElectronItem &item)
+{
+    if(item.isItem())
+        m_current = item;
 }

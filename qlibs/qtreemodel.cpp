@@ -1,12 +1,14 @@
 #include "qtreemodel.h"
 
-QTreeModel::QTreeModel(QObject *parent, ElectronTree *eltree) :
+QTreeModel::QTreeModel(QObject *parent, const ElectronTree *eltree) :
     QAbstractItemModel(parent),
     m_eltree(eltree)
-{ }
+{
+}
 
 QTreeModel::~QTreeModel()
-{ }
+{
+}
 
 QModelIndex QTreeModel::index(int row, int column, const QModelIndex &parent) const
 {
@@ -34,13 +36,18 @@ QModelIndex QTreeModel::parent(const QModelIndex &child) const
     const ElectronTree* childInfo = static_cast<ElectronTree*>(child.internalPointer());
     Q_ASSERT(childInfo != 0);
 
-    return findParent(m_eltree, childInfo);
+    for(size_t i = 0; i < m_eltree->childrenSize(); i++) {
+        if(childInfo == (*m_eltree)[i])
+            return QModelIndex();
+        QModelIndex index = findParent((*m_eltree)[i], childInfo);
+        if(index.isValid())
+            return index;
+    }
+    return QModelIndex();
 }
 
 QModelIndex QTreeModel::findParent(ElectronTree *tree, const ElectronTree *item) const
 {
-    /*if(tree == item)
-        return QModelIndex();
     for(size_t i = 0; i < tree->childrenSize(); i++) {
         if((*tree)[i] == item)
             return createIndex(i, 0, tree);
@@ -49,7 +56,7 @@ QModelIndex QTreeModel::findParent(ElectronTree *tree, const ElectronTree *item)
             if(index.isValid())
                 return index;
         }
-    }*/
+    }
     return QModelIndex();
 }
 
@@ -87,15 +94,21 @@ QVariant QTreeModel::data(const QModelIndex &index, int role) const
 
     const ElectronTree* nodeInfo = static_cast<ElectronTree*>(index.internalPointer());
     Q_ASSERT(nodeInfo != 0);
-    return nameData(nodeInfo, role);
+    return nameData(*nodeInfo, role);
 }
 
-QVariant QTreeModel::nameData(const ElectronTree* &item, int role) const
+QVariant QTreeModel::nameData(const ElectronTree &item, int role) const
 {
     switch (role) {
     case Qt::EditRole:
     case Qt::DisplayRole:
-        return QString::fromStdString(item->value().name());
+        return QString::fromStdString(item.value().name());
+    case ItemReference: {
+        QVariant var;
+        var.setValue<ElectronItem>(item.value());
+        return var;
+    }
+
     default:
         return QVariant();
     }

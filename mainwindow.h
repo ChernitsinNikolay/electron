@@ -5,6 +5,7 @@
 #include <QModelIndex>
 #include "components/electron.h"
 #include "qlibs/qtreemodel.h"
+#include "qlibs/qpreviewmodel.h"
 #include <QTreeView>
 
 class MainWindow : public QMainWindow
@@ -16,13 +17,12 @@ public:
     ~MainWindow();
 
 public slots:
-    void setElectronTree(ElectronTree *tree);
-
-private slots:
-    void currentChanged(QModelIndex old, QModelIndex current);
+    void setElectron(Electron *electron);
 
 private:
+    Electron *m_electron;
     QTreeModel *treeModel;
+    QPreviewModel *preview;
     QTreeView *tv;
 };
 
