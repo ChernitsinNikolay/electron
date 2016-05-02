@@ -3,67 +3,63 @@
 
 #include <vector>
 
-template <class T>
+template <typename T>
 class Tree
 {
-    //typedef typename std::vector<Tree<T>*> pTypeT;
 public:
-    explicit Tree();
-    explicit Tree(const Tree<T> &tree);
+    Tree();
+    Tree(const Tree<T> &tree);
 
     virtual ~Tree();
 
-    void setParent(Tree<T> *tree)
-    { parent = tree; }
+    inline void addChildren(const Tree<T> &tree);
+    inline void setValue(const T &value);
 
-    void addChildren(const Tree<T> &tree)
-    { Tree<T> *temp = new Tree<T>(tree); temp->setParent(this); m_childrens.push_back(temp); }
-
-    void setValue(const T &value)
-    { m_value = new T(value); }
-
-    const Tree<T> *operator[](std::size_t idx) const
-    { return m_childrens[idx]; }
-
-    Tree<T> *getParent() const
-    { return parent; }
-
-    std::size_t size() const
-    { return m_childrens.size(); }
-
-    const T &value() const { return *m_value; }
+    inline std::size_t childrenSize() const { return m_childrens.size(); }
+    Tree<T> *operator[](std::size_t idx) const { return m_childrens[idx]; }
+    inline const T &value() const { return *m_value; }
 
 private:
-    Tree<T> *parent;
     std::vector<Tree<T>*> m_childrens;
     T *m_value;
 };
 
-template <class T>
-Tree<T>::Tree()
+
+/*************************************************************
+ ***********************REFERENCE*****************************
+ *************************************************************/
+template <typename T>
+Tree<T>::Tree() : m_value(0) { }
+
+template <typename T>
+Tree<T>::Tree(const Tree<T> &tree) :
+    m_value(0)
 {
-    m_value = 0;
-    parent = 0;
+    setValue(*tree.m_value);
+    for(typename std::vector<Tree<T>*>::const_iterator iter = tree.m_childrens.begin(); iter != tree.m_childrens.end(); iter++)
+        addChildren(Tree<T>(**iter));
 }
 
-template <class T>
+template <typename T>
 Tree<T>::~Tree()
 {
-    /*for(pTypeT::iterator iter = m_childrens.begin(); iter != m_childrens.end(); iter++)
-        delete (*iter);
-    delete m_value;*/
+    delete m_value;
+    for(typename std::vector<Tree<T>*>::iterator iter = m_childrens.begin(); iter != m_childrens.end(); iter++)
+        delete *iter;
+    m_childrens.clear();
 }
 
-template <class T>
-Tree<T>::Tree(const Tree<T> &tree)
+template <typename T>
+void Tree<T>::addChildren(const Tree<T> &tree)
 {
-    m_value = tree.m_value;
-    parent = tree.parent;
-    for(std::size_t i = 0; i < tree.m_childrens.size(); i++) {
-        Tree<T> *temp = new Tree<T>(*tree.m_childrens[i]);
-        temp->setParent(this);
-        m_childrens.push_back(temp);
-    }
+    m_childrens.push_back(new Tree<T>(tree));
+}
+
+template <typename T>
+void Tree<T>::setValue(const T &value)
+{
+    delete m_value;
+    m_value = new T(value);
 }
 
 #endif // TREE_H

@@ -2,18 +2,18 @@
 #include <QTreeView>
 #include <QGraphicsView>
 #include <QVBoxLayout>
-#include "qlibs/qtreemodel.h"
-#include "models/appmodel.h"
+//#include "qlibs/qtreemodel.h"
+//#include "models/appmodel.h"
 #include <iostream>
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
+    : QMainWindow(parent), treeModel(0)
 {
-    AppModel *model = new AppModel();
-    QTreeView *tv = new QTreeView(this);
+    //AppModel *model = new AppModel();
+    tv = new QTreeView(this);
     tv->setUniformRowHeights(true);
     tv->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    tv->setModel(new QTreeModel(this, model));
+    //tv->setModel(new QTreeModel(this, model));
     QGraphicsView *graphicsView = new QGraphicsView(this);
     QVBoxLayout *vbl = new QVBoxLayout;
     vbl->addWidget(tv);
@@ -42,4 +42,12 @@ void MainWindow::currentChanged(QModelIndex old, QModelIndex current)
         //std::cout<<old.data(Qt::UserRole).<<std::endl;
     }*/
     //old.internalPointer()
+}
+
+void MainWindow::setElectronTree(ElectronTree *tree)
+{
+    tv->setModel(0);
+    delete treeModel;
+    treeModel = new QTreeModel(this, tree);
+    tv->setModel(treeModel);
 }

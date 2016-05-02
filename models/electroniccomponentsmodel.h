@@ -2,7 +2,7 @@
 #define ELECTRONICCOMPONENTSMODEL_H
 
 
-#include "libs/containers/tree.h"
+#include "libs/containers/_tree.h"
 #include "components/electroniccomponent.h"
 
 

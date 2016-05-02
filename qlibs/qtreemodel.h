@@ -2,17 +2,13 @@
 #define QTREEMODEL_H
 
 #include <QAbstractItemModel>
-#include "models/electroniccomponentsmodel.h"
+#include "components/electron.h"
 
 class QTreeModel : public QAbstractItemModel
 {
     Q_OBJECT
 public:
-    enum ItemDataRole {
-        ItemReference = Qt::UserRole + 1
-    };
-
-    QTreeModel(QObject *parent = 0, ElectronicComponentsModel *ecmodel = 0);
+    QTreeModel(QObject *parent = 0, ElectronTree *eltree = 0);
     virtual ~QTreeModel();
 
     QModelIndex index(int row, int column, const QModelIndex &parent) const;
@@ -25,20 +21,12 @@ public:
 
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
 
-    bool canFetchMore(const QModelIndex &parent) const;
-    void fetchMore(const QModelIndex &parent);
-
-    bool hasChildren(const QModelIndex &parent) const;
-
 private:
-    struct NodeInfo;
-    typedef QVector<NodeInfo> NodeInfoList;
-    NodeInfoList _nodes;
-    ElectronicComponentsModel *m_ecmodel;
+    ElectronTree *m_eltree;
 
-    void fetchRootDirectory();
-    int findRow(const NodeInfo* nodeInfo) const;
-    QVariant nameData(const QString& name, int role) const;
+    //int findRow(const NodeInfo* nodeInfo) const;
+    QModelIndex findParent(ElectronTree *tree, const ElectronTree *item) const;
+    QVariant nameData(const ElectronTree *&item, int role) const;
 };
 
 #endif // QTREEMODEL_H

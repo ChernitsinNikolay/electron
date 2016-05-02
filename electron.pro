@@ -21,14 +21,18 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     qlibs/qtreemodel.cpp \
-    libs/containers/tree.cpp \
-    components/electroniccomponent.cpp \
-    models/electroniccomponentsmodel.cpp \
-    models/appmodel.cpp
+#    components/electroniccomponent.cpp \
+#    models/electroniccomponentsmodel.cpp \
+#    models/appmodel.cpp \
+    components/electron.cpp \
+    components/electronelement.cpp
 
 HEADERS  += mainwindow.h \
     qlibs/qtreemodel.h \
+#    components/electroniccomponent.h \
+#    models/electroniccomponentsmodel.h \
+#    models/appmodel.h \
+    components/electron.h \
+#    libs/containers/_tree.h \
     libs/containers/tree.h \
-    components/electroniccomponent.h \
-    models/electroniccomponentsmodel.h \
-    models/appmodel.h
+    components/electronelement.h
