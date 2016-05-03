@@ -53,5 +53,6 @@ void MainWindow::setElectron(Electron *electron)
     treeModel = new QTreeModel(this, m_electron->tree());
     preview = new QPreviewModel(this, electron);
     TreeV->setModel(treeModel);
+    Elem->setModel(preview);
     connect(TreeV->selectionModel(), SIGNAL(currentChanged(QModelIndex,QModelIndex)), preview, SLOT(currentChanged(QModelIndex,QModelIndex)));
 }

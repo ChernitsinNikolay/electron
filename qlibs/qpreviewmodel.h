@@ -12,7 +12,7 @@ class QPreviewModel : public QObject
 public:
     explicit QPreviewModel(QObject *parent = 0, Electron *electron = 0);
 
-    QGraphicsChip *current() const;
+    ElectronItem *current() const;
 
 signals:
     void currentUpdated();

@@ -4,6 +4,7 @@
 #include <QMenu>
 #include <QWidget>
 #include <QToolButton>
+#include "qlibs/qgraphicschip.h"
 
 ElemWidget::ElemWidget(QWidget *parent) :
     QWidget(parent), m_model(0)
@@ -58,7 +59,9 @@ void ElemWidget::setModel(QPreviewModel *model)
 
 void ElemWidget::curentChanged()
 {
-    scene->clear();
-    //scene->add(m_model->current());
+    foreach(QGraphicsItem *item, scene->items())
+        delete item;
+    scene->items().clear();
+    scene->addItem(new QGraphicsChip(m_model->current()));
 }
 

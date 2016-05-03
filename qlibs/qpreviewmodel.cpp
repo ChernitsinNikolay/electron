@@ -6,7 +6,11 @@
 QPreviewModel::QPreviewModel(QObject *parent, Electron *electron) :
     QObject(parent), m_electron(electron)
 {
+}
 
+ElectronItem *QPreviewModel::current() const
+{
+    return m_electron->current();
 }
 
 void QPreviewModel::currentChanged(QModelIndex current, QModelIndex previous)
@@ -16,25 +20,32 @@ void QPreviewModel::currentChanged(QModelIndex current, QModelIndex previous)
     if(var.canConvert(QMetaType::type("ElectronItem"))) {
         ElectronItem item = qvariant_cast<ElectronItem>(var);
         m_electron->setCurrent(item);
-        //TODO
+        std::cout<<"good\t"<<QString::fromStdString(item.name()).toLocal8Bit().toStdString()<<std::endl;
         emit currentUpdated();
-       // std::cout<<"good\t"<<QString::fromStdString(item.name()).toLocal8Bit().toStdString()<<std::endl;
     }
 }
 
 void QPreviewModel::rotateLeft()
 {
+    m_electron->rotateCurrent(90);
+    emit currentUpdated();
 }
 
 void QPreviewModel::rotateRight()
 {
+    m_electron->rotateCurrent(-90);
+    emit currentUpdated();
 }
 
 void QPreviewModel::reflectX()
 {
+    m_electron->reflectCurrent(ElectronAxis::X);
+    emit currentUpdated();
 }
 
 void QPreviewModel::reflectY()
 {
+    m_electron->reflectCurrent(ElectronAxis::Y);
+    emit currentUpdated();
 }
 

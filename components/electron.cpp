@@ -5,7 +5,8 @@
 
 #define BUF_SIZE 1024
 
-Electron::Electron()
+Electron::Electron() :
+    m_current(0)
 {
     xmlParse();
 }
@@ -97,7 +98,8 @@ bool Electron::xmlParse()
 bool Electron::setCurrent(const ElectronItem &item)
 {
     if(item.isItem()) {
-        m_current = item;
+        delete m_current;
+        m_current = new ElectronItem(item);
         return true;
     }
     return false;
@@ -105,10 +107,10 @@ bool Electron::setCurrent(const ElectronItem &item)
 
 void Electron::rotateCurrent(float angle)
 {
-    m_current.rotate(angle);
+    m_current->rotate(angle);
 }
 
 void Electron::reflectCurrent(ElectronAxis axis)
 {
-    m_current.reflect(axis);
+    m_current->reflect(axis);
 }

@@ -28,6 +28,9 @@ namespace Basic {
         virtual void rotate(float angle);
         virtual void reflect(Axis axis);
 
+        inline float x() const { return m_x; }
+        inline float y() const { return m_y; }
+
     private:
         float m_x, m_y;
     };
@@ -41,6 +44,11 @@ namespace Basic {
         virtual std::string parse(std::string token, size_t *idx);
         virtual void rotate(float angle);
         virtual void reflect(Axis axis);
+
+        inline float x() const { return pos.x(); }
+        inline float y() const { return pos.y(); }
+        inline float w() const { return width; }
+        inline float h() const { return height; }
 
     private:
         Point pos;
@@ -71,6 +79,11 @@ namespace Basic {
         virtual std::string parse(std::string token, size_t *idx);
         virtual void rotate(float angle);
         virtual void reflect(Axis axis);
+
+        inline float sx() const { return start.x(); }
+        inline float sy() const { return start.y(); }
+        inline float ex() const { return end.x(); }
+        inline float ey() const { return end.y(); }
 
     private:
         Point start, end;
