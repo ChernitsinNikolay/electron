@@ -4,6 +4,7 @@
 #include "libs/containers/tree.h"
 
 typedef ElectronElement ElectronItem;
+typedef ElectronItem::Axis ElectronAxis;
 typedef Tree<ElectronItem> ElectronTree;
 
 class Electron
@@ -15,6 +16,9 @@ public:
 
     bool setCurrent(const ElectronItem &item);
     inline const ElectronItem &current() const { return m_current; }
+
+    void rotateCurrent(float angle);
+    void reflectCurrent(ElectronAxis axis);
 
 private:
     bool xmlParse();

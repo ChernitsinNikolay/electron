@@ -76,6 +76,19 @@ bool Electron::xmlParse()
 
 bool Electron::setCurrent(const ElectronItem &item)
 {
-    if(item.isItem())
+    if(item.isItem()) {
         m_current = item;
+        return true;
+    }
+    return false;
+}
+
+void Electron::rotateCurrent(float angle)
+{
+    m_current.rotate(angle);
+}
+
+void Electron::reflectCurrent(ElectronAxis axis)
+{
+    m_current.reflect(axis);
 }
