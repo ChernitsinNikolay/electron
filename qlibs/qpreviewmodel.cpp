@@ -3,6 +3,7 @@
 #include <QMetaType>
 #include <iostream>
 
+
 QPreviewModel::QPreviewModel(QObject *parent, Electron *electron) :
     QObject(parent), m_electron(electron)
 {

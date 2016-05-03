@@ -71,6 +71,12 @@ Basic::Arc Basic::Arc::operator =(const Arc &arc)
 
 std::string Basic::Arc::parse(std::string token, size_t *idx)
 {
+    token = rect.parse(token, idx);
+    startAngle = std::stof(token, idx);
+    token = token.substr(*idx + 1);
+    sweepAngle = std::stof(token, idx);
+    return token.size() == *idx ? "" : token.substr(*idx + 1);
+
 }
 
 void Basic::Arc::reflect(Axis axis)
@@ -120,6 +126,9 @@ Basic::Arrow Basic::Arrow::operator =(const Arrow &arrow)
 
 std::string Basic::Arrow::parse(std::string token, size_t *idx)
 {
+    token = line.parse(token, idx);
+    h = std::stof(token, idx);
+    return token.size() == *idx ? "" : token.substr(*idx + 1);
 }
 
 void Basic::Arrow::reflect(Axis axis)
@@ -143,6 +152,9 @@ Basic::String Basic::String::operator =(const String &string)
 
 std::string Basic::String::parse(std::string token, size_t *idx)
 {
+     token = point.parse(token, idx);
+     std::copy(str.begin(),str.end(),std::back_inserter(str));
+     return token;
 }
 
 void Basic::String::reflect(Axis axis)
@@ -165,6 +177,9 @@ Basic::Join Basic::Join::operator =(const Join &join)
 
 std::string Basic::Join::parse(std::string token, size_t *idx)
 {
+    token = pos.parse(token, idx);
+    return token;
+
 }
 
 void Basic::Join::reflect(Axis axis)
