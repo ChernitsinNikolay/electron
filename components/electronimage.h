@@ -103,6 +103,8 @@ namespace Basic {
         virtual void rotate(float angle);
         virtual void reflect(Axis axis);
 
+        //???
+
     private:
         Line line;
         float h;
@@ -118,6 +120,10 @@ namespace Basic {
         virtual void rotate(float angle);
         virtual void reflect(Axis axis);
 
+        inline float x() const { return point.x(); }
+        inline float y() const { return point.y(); }
+        inline const std::string &string() const { return str; }
+
     private:
         Point point;
         std::string str;
@@ -132,6 +138,9 @@ namespace Basic {
         virtual std::string parse(std::string token, size_t *idx);
         virtual void rotate(float angle);
         virtual void reflect(Axis axis);
+
+        inline float x() const { return pos.x(); }
+        inline float y() const { return pos.y(); }
 
     private:
         Point pos;

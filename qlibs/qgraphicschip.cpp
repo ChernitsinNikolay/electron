@@ -24,6 +24,7 @@ void QGraphicsChip::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
     std::cout<<"paint()"<<std::endl;
     Q_UNUSED(widget);
 
+    //Rectangles;
     for(ElectronImage::Rectangles::const_iterator iter = m_eitem->image().rectangles().begin(); iter != m_eitem->image().rectangles().end(); iter++) {
         QPolygonF polygon;
         const Basic::Rectangle rect = *iter;
@@ -33,9 +34,30 @@ void QGraphicsChip::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
         polygon.push_back(QPointF(rect.x(), rect.y() - rect.h()));
         painter->drawPolygon(polygon);
     }
+    //Arcs;
+    for(ElectronImage::Arcs::const_iterator iter = m_eitem->image().arcs().begin(); iter != m_eitem->image().arcs().end(); iter++) {
+        const Basic::Arc arc = *iter;
+        const Basic::Rectangle rect = arc.rectangle();
+        painter->drawArc(rect.x(), rect.y(), rect.w(), rect.h(), arc.sAngle(), arc.eAngle());
+    }
+    //Lines;
     for(ElectronImage::Lines::const_iterator iter = m_eitem->image().lines().begin(); iter != m_eitem->image().lines().end(); iter++) {
         const Basic::Line line = *iter;
         painter->drawLine(line.sx(), line.sy(), line.ex(), line.ey());
+    }
+    //Arrows;
+    for(ElectronImage::Arrows::const_iterator iter = m_eitem->image().arrows().begin(); iter != m_eitem->image().arrows().end(); iter++) {
+        //TODO
+    }
+    //Strings;
+    for(ElectronImage::Strings::const_iterator iter = m_eitem->image().strings().begin(); iter != m_eitem->image().strings().end(); iter++) {
+        const Basic::String string = *iter;
+        painter->drawText(string.x(), string.y(), QString::fromStdString(string.string()));
+    }
+    //Joins;
+    for(ElectronImage::Joins::const_iterator iter = m_eitem->image().joins().begin(); iter != m_eitem->image().joins().end(); iter++) {
+        const Basic::Join join = *iter;
+        painter->drawPoint(join.x(), join.y());
     }
 
     /*QColor fillColor = (option->state & QStyle::State_Selected) ? color.dark(150) : color;
