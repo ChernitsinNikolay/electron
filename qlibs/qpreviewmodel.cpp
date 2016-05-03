@@ -16,6 +16,30 @@ void QPreviewModel::currentChanged(QModelIndex current, QModelIndex previous)
     if(var.canConvert(QMetaType::type("ElectronItem"))) {
         ElectronItem item = qvariant_cast<ElectronItem>(var);
         m_electron->setCurrent(item);
-        std::cout<<"good\t"<<QString::fromStdString(item.name()).toLocal8Bit().toStdString()<<std::endl;
+       // std::cout<<"good\t"<<QString::fromStdString(item.name()).toLocal8Bit().toStdString()<<std::endl;
     }
 }
+
+void QPreviewModel::RotateLeft()
+{
+
+
+}
+
+void QPreviewModel::RotateRight()
+{
+
+
+}
+
+void QPreviewModel::ReflectX()
+{
+
+
+}
+
+void QPreviewModel::ReflectY()
+{
+
+}
+

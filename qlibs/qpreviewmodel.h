@@ -15,7 +15,10 @@ signals:
 
 public slots:
     void currentChanged(QModelIndex current, QModelIndex previous);
-
+    void RotateLeft();
+    void RotateRight();
+    void ReflectX();
+    void ReflectY();
 private:
     Electron *m_electron;
 };

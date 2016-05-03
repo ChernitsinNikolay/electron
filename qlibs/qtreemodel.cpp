@@ -1,4 +1,5 @@
 #include "qtreemodel.h"
+#include <QStringList>
 
 QTreeModel::QTreeModel(QObject *parent, const ElectronTree *eltree) :
     QAbstractItemModel(parent),
