@@ -65,6 +65,10 @@ namespace Basic {
         virtual void rotate(float angle);
         virtual void reflect(Axis axis);
 
+        inline Rectangle rectangle() const { return rect; }
+        inline float sAngle() const { return startAngle; }
+        inline float eAngle() const { return sweepAngle; }
+
     private:
         Rectangle rect;
         float startAngle, sweepAngle;
