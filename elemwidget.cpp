@@ -5,7 +5,8 @@
 #include <QWidget>
 #include <QToolButton>
 
-ElemWidget::ElemWidget(QWidget *parent) : QWidget(parent)
+ElemWidget::ElemWidget(QWidget *parent) :
+    QWidget(parent), m_model(0)
 {
     RotLeft = new QPushButton;
     RotLeft->setIcon(QIcon(":/left.png"));
@@ -28,14 +29,6 @@ ElemWidget::ElemWidget(QWidget *parent) : QWidget(parent)
     scene = new QGraphicsScene;
 
     graphicsView->setScene(scene);
-    QPen blackpen(Qt::black);
-    QPen redpen(Qt::red);
-    QBrush whitebrush(Qt::white);
-    blackpen.setWidth(2);
-    redpen.setWidth(2);
-    rectangle = scene ->addRect(10,10,50,100,blackpen,whitebrush);
-    lineUp = scene ->addLine(35,10,35,-20,redpen);
-    lineDowm = scene ->addLine(35,112,35,142,blackpen);
     //rectangle ->setFlag(QGraphicsItem::ItemIsMovable);
 
     QVBoxLayout *BtmLayout = new QVBoxLayout;
@@ -50,32 +43,22 @@ ElemWidget::ElemWidget(QWidget *parent) : QWidget(parent)
     ElemLayout->addLayout(BtmLayout);
     ElemLayout->addWidget(graphicsView);
 
-    connect(RotLeft,SIGNAL(clicked()),this,SLOT(RotateLeft()));
-    connect(RotRight,SIGNAL(clicked()),this,SLOT(RotateRight()));
-    connect(RefX,SIGNAL(clicked()),this,SLOT(ReflectX()));
-    connect(RefY,SIGNAL(clicked()),this,SLOT(ReflectY()));
-
     setLayout(ElemLayout);
-
 }
 
-void ElemWidget::RotateLeft()
+void ElemWidget::setModel(QPreviewModel *model)
 {
-    graphicsView->rotate(-90);
+    m_model = model;
+    connect(RotLeft, SIGNAL(pressed()), m_model, SLOT(rotateLeft()));
+    connect(RotRight, SIGNAL(pressed()), m_model, SLOT(rotateRight()));
+    connect(RefX, SIGNAL(pressed()), m_model, SLOT(reflectX()));
+    connect(RefY, SIGNAL(pressed()), m_model, SLOT(reflectY()));
+    connect(m_model, SIGNAL(currentUpdated()), SLOT(curentChanged()));
 }
 
-void ElemWidget::RotateRight()
+void ElemWidget::curentChanged()
 {
-    graphicsView->rotate(90);
-}
-
-void ElemWidget::ReflectX()
-{
-    graphicsView->rotate(180);
-}
-
-void ElemWidget::ReflectY()
-{
-    graphicsView->rotate(180);
+    scene->clear();
+    //scene->add(m_model->current());
 }
 
