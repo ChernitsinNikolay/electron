@@ -5,6 +5,7 @@
 #include <QWidget>
 #include <QToolButton>
 #include "qlibs/qgraphicschip.h"
+#include <iostream>
 
 ElemWidget::ElemWidget(QWidget *parent) :
     QWidget(parent), m_model(0)
@@ -28,7 +29,6 @@ ElemWidget::ElemWidget(QWidget *parent) :
     graphicsView = new QGraphicsView;
 
     scene = new QGraphicsScene;
-    scene->setBackgroundBrush(QBrush(Qt::gray));
 
     graphicsView->setScene(scene);
     //rectangle ->setFlag(QGraphicsItem::ItemIsMovable);
@@ -64,6 +64,10 @@ void ElemWidget::curentChanged()
         delete item;
     scene->items().clear();
     scene->update();
-    scene->addItem(new QGraphicsChip(m_model->current()));
+    QGraphicsItem *chip = new QGraphicsChip(m_model->current());
+    float sc = graphicsView->width() / chip->boundingRect().width() / 2.0;
+    std::cout<<sc<<std::endl;
+    scene->addItem(chip);
+    chip->setScale(3.0);
 }
 

@@ -9,6 +9,7 @@ QGraphicsChip::QGraphicsChip(ElectronItem *item) :
     float minX = 0;
     float maxY = 0;
     float minY = 0;
+
     //Rectangles;
     for(ElectronImage::Rectangles::const_iterator iter = m_eitem->image().rectangles().begin(); iter != m_eitem->image().rectangles().end(); iter++) {
         const Basic::Rectangle rect = *iter;
@@ -17,16 +18,23 @@ QGraphicsChip::QGraphicsChip(ElectronItem *item) :
         maxX = std::max(maxX, rect.x());
         maxX = std::max(maxX, rect.x() + rect.w());
         minY = std::min(minY, rect.y());
-        minY = std::min(minY, rect.y() - rect.h());
+        minY = std::min(minY, rect.y() + rect.h());
         maxY = std::max(maxY, rect.y());
-        maxY = std::max(maxY, rect.y() - rect.h());
+        maxY = std::max(maxY, rect.y() + rect.h());
     }
     //Arcs;
-    /*for(ElectronImage::Arcs::const_iterator iter = m_eitem->image().arcs().begin(); iter != m_eitem->image().arcs().end(); iter++) {
+    for(ElectronImage::Arcs::const_iterator iter = m_eitem->image().arcs().begin(); iter != m_eitem->image().arcs().end(); iter++) {
         const Basic::Arc arc = *iter;
         const Basic::Rectangle rect = arc.rectangle();
-        painter->drawArc(rect.x(), rect.y(), rect.w(), rect.h(), arc.sAngle(), arc.eAngle());
-    }*/
+        minX = std::min(minX, rect.x());
+        minX = std::min(minX, rect.x() + rect.w());
+        maxX = std::max(maxX, rect.x());
+        maxX = std::max(maxX, rect.x() + rect.w());
+        minY = std::min(minY, rect.y());
+        minY = std::min(minY, rect.y() + rect.h());
+        maxY = std::max(maxY, rect.y());
+        maxY = std::max(maxY, rect.y() + rect.h());
+    }
     //Lines;
     for(ElectronImage::Lines::const_iterator iter = m_eitem->image().lines().begin(); iter != m_eitem->image().lines().end(); iter++) {
         const Basic::Line line = *iter;
@@ -40,36 +48,44 @@ QGraphicsChip::QGraphicsChip(ElectronItem *item) :
         maxY = std::max(maxY, line.ey());
     }
     //Arrows;
-    /*for(ElectronImage::Arrows::const_iterator iter = m_eitem->image().arrows().begin(); iter != m_eitem->image().arrows().end(); iter++) {
+    for(ElectronImage::Arrows::const_iterator iter = m_eitem->image().arrows().begin(); iter != m_eitem->image().arrows().end(); iter++) {
         //TODO
     }
     //Strings;
     for(ElectronImage::Strings::const_iterator iter = m_eitem->image().strings().begin(); iter != m_eitem->image().strings().end(); iter++) {
         const Basic::String string = *iter;
-        painter->drawText(string.x(), string.y(), QString::fromStdString(string.string()));
+        minX = std::min(minX, string.x());
+        maxX = std::max(maxX, string.x());
+        minY = std::min(minY, string.y());
+        maxY = std::max(maxY, string.y());
     }
     //Joins;
     for(ElectronImage::Joins::const_iterator iter = m_eitem->image().joins().begin(); iter != m_eitem->image().joins().end(); iter++) {
         const Basic::Join join = *iter;
-        painter->drawPoint(join.x(), join.y());
-    }*/
+        minX = std::min(minX, join.x());
+        maxX = std::max(maxX, join.x());
+        minY = std::min(minY, join.y());
+        maxY = std::max(maxY, join.y());
+    }
+
     bounding.setX(minX);
     bounding.setY(minY);
     bounding.setWidth(maxX - minX);
     bounding.setHeight(maxY - minY);
-    std::cout<<bounding.x()<<"\t"<<bounding.y()<<"\t"<<bounding.width()<<"\t"<<bounding.height()<<std::endl;
+    //std::cout<<bounding.x()<<"\t"<<bounding.y()<<"\t"<<bounding.width()<<"\t"<<bounding.height()<<std::endl;
 }
 
 QRectF QGraphicsChip::boundingRect() const
 {
-    return QRectF(-50, -50, 50, 50);
-    //return bounding;
+    //return QRectF(-50, -50, 50, 50);
+    return bounding;
 }
 
 QPainterPath QGraphicsChip::shape() const
 {
     QPainterPath path;
-    path.addRect(14, 14, 82, 42);
+    //path.addRect(14, 14, 82, 42);
+    path.addRect(bounding);
     return path;
 }
 
@@ -77,21 +93,23 @@ void QGraphicsChip::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
 {
     std::cout<<"paint()"<<std::endl;
     Q_UNUSED(widget);
+    Q_UNUSED(option);
 
-    QPolygonF br;
+    /*QPolygonF br;
     br.push_back(QPointF(bounding.x(), bounding.y()));
     br.push_back(QPointF(bounding.x() + bounding.width(), bounding.y()));
-    br.push_back(QPointF(bounding.x() + bounding.width(), bounding.y() - bounding.height()));
-    br.push_back(QPointF(bounding.x(), bounding.y() - bounding.height()));
-    painter->drawPolygon(br);
+    br.push_back(QPointF(bounding.x() + bounding.width(), bounding.y() + bounding.height()));
+    br.push_back(QPointF(bounding.x(), bounding.y() + bounding.height()));
+    painter->drawPolygon(br);*/
+
     //Rectangles;
     for(ElectronImage::Rectangles::const_iterator iter = m_eitem->image().rectangles().begin(); iter != m_eitem->image().rectangles().end(); iter++) {
         QPolygonF polygon;
         const Basic::Rectangle rect = *iter;
         polygon.push_back(QPointF(rect.x(), rect.y()));
         polygon.push_back(QPointF(rect.x() + rect.w(), rect.y()));
-        polygon.push_back(QPointF(rect.x() + rect.w(), rect.y() - rect.h()));
-        polygon.push_back(QPointF(rect.x(), rect.y() - rect.h()));
+        polygon.push_back(QPointF(rect.x() + rect.w(), rect.y() + rect.h()));
+        polygon.push_back(QPointF(rect.x(), rect.y() + rect.h()));
         painter->drawPolygon(polygon);
     }
     //Arcs;

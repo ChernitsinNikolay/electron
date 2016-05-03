@@ -29,7 +29,7 @@ namespace Basic {
         virtual void reflect(Axis axis);
 
         inline float x() const { return m_x; }
-        inline float y() const { return m_y; }
+        inline float y() const { return -m_y; }
 
     private:
         float m_x, m_y;
