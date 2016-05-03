@@ -63,6 +63,7 @@ void ElemWidget::curentChanged()
     foreach(QGraphicsItem *item, scene->items())
         delete item;
     scene->items().clear();
+    scene->update();
     scene->addItem(new QGraphicsChip(m_model->current()));
 }
 
