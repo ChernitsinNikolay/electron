@@ -25,11 +25,22 @@ bool Electron::xmlParse()
         db.read(buf, BUF_SIZE);
         bytes = db.gcount();
         for(int i = 0; i < bytes; i++) {
-            if(buf[i] == '<' || !lex.empty())
+            if(buf[i] == '<') {
+                if(!lex.empty()) {
+                    vlex.push_back(lex);
+                    lex.clear();
+                }
                 lex += buf[i];
-            if(buf[i] == '>' && !lex.empty()) {
-                vlex.push_back(lex);
-                lex.clear();
+            } else if(buf[i] == '>') {
+                lex += buf[i];
+                if(!lex.empty()) {
+                    vlex.push_back(lex);
+                    lex.clear();
+                } else {
+                    std::cerr<<"SCANER ERROR"<<std::endl;
+                }
+            } else if(buf[i] != '\n' && buf[i] != '\t'){
+                lex += buf[i];
             }
         }
     }
@@ -63,6 +74,15 @@ bool Electron::xmlParse()
                 tstack.pop();
             } else if((std::string(*iter)).compare(0, 10, "</elements") == 0) {
                 st = 0;
+            } else if((std::string(*iter)).compare(0, 6, "<image") == 0) {
+                for(std::vector<std::string>::iterator iter2 = iter + 1; iter2 != vlex.end(); iter2++) {
+                    if((std::string(*iter2)).compare(0, 8, "</image>") == 0) {
+                        ElectronImage image;
+                        image.parse(iter, iter2 + 1);
+                        ttree->value().setImage(image);
+                        break;
+                    }
+                }
             }
             break;
         }
@@ -76,6 +96,19 @@ bool Electron::xmlParse()
 
 bool Electron::setCurrent(const ElectronItem &item)
 {
-    if(item.isItem())
+    if(item.isItem()) {
         m_current = item;
+        return true;
+    }
+    return false;
+}
+
+void Electron::rotateCurrent(float angle)
+{
+    m_current.rotate(angle);
+}
+
+void Electron::reflectCurrent(ElectronAxis axis)
+{
+    m_current.reflect(axis);
 }

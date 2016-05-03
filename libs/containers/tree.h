@@ -17,7 +17,7 @@ public:
 
     inline std::size_t childrenSize() const { return m_childrens.size(); }
     Tree<T> *operator[](std::size_t idx) const { return m_childrens[idx]; }
-    inline const T &value() const { return *m_value; }
+    inline T &value() const { return *m_value; }
 
 private:
     std::vector<Tree<T>*> m_childrens;
