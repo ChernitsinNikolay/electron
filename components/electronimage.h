@@ -13,6 +13,7 @@ namespace Basic {
         };
 
         ImageItem() { }
+        virtual std::string parse(std::string token, size_t *idx) = 0;
         virtual void rotate(float angle) = 0;
         virtual void reflect(Axis axis) = 0;
     };
@@ -22,6 +23,8 @@ namespace Basic {
     public:
         Point();
 
+        Point operator=(const Point &point);
+        virtual std::string parse(std::string token, size_t *idx);
         virtual void rotate(float angle);
         virtual void reflect(Axis axis);
 
@@ -34,6 +37,8 @@ namespace Basic {
     public:
         Rectangle();
 
+        Rectangle operator=(const Rectangle &rect);
+        virtual std::string parse(std::string token, size_t *idx);
         virtual void rotate(float angle);
         virtual void reflect(Axis axis);
 
@@ -47,6 +52,8 @@ namespace Basic {
     public:
         Arc();
 
+        Arc operator=(const Arc &arc);
+        virtual std::string parse(std::string token, size_t *idx);
         virtual void rotate(float angle);
         virtual void reflect(Axis axis);
 
@@ -60,6 +67,8 @@ namespace Basic {
     public:
         Line();
 
+        Line operator=(const Line &line);
+        virtual std::string parse(std::string token, size_t *idx);
         virtual void rotate(float angle);
         virtual void reflect(Axis axis);
 
@@ -72,6 +81,8 @@ namespace Basic {
     public:
         Arrow();
 
+        Arrow operator=(const Arrow &arrow);
+        virtual std::string parse(std::string token, size_t *idx);
         virtual void rotate(float angle);
         virtual void reflect(Axis axis);
 
@@ -85,6 +96,8 @@ namespace Basic {
     public:
         String();
 
+        String operator=(const String &string);
+        virtual std::string parse(std::string token, size_t *idx);
         virtual void rotate(float angle);
         virtual void reflect(Axis axis);
 
@@ -98,6 +111,8 @@ namespace Basic {
     public:
         Join();
 
+        Join operator=(const Join &join);
+        virtual std::string parse(std::string token, size_t *idx);
         virtual void rotate(float angle);
         virtual void reflect(Axis axis);
 
@@ -116,8 +131,11 @@ public:
     typedef std::vector<Basic::Arrow> Arrows;
     typedef std::vector<Basic::String> Strings;
     typedef std::vector<Basic::Join> Joins;
+    typedef std::vector<std::string>::iterator vsit;
 
     ElectronImage();
+
+    bool parse(const vsit &begin, const vsit &end);
 
     ElectronImage &operator=(const ElectronImage &item);
     void rotate(float angle);
