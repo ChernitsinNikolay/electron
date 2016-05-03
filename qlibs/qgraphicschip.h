@@ -19,6 +19,7 @@ protected:
 
 private:
     ElectronItem *m_eitem;
+    QRectF bounding;
 };
 
 #endif // QGRAPHICSCHIP_H

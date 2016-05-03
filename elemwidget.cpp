@@ -28,6 +28,7 @@ ElemWidget::ElemWidget(QWidget *parent) :
     graphicsView = new QGraphicsView;
 
     scene = new QGraphicsScene;
+    scene->setBackgroundBrush(QBrush(Qt::gray));
 
     graphicsView->setScene(scene);
     //rectangle ->setFlag(QGraphicsItem::ItemIsMovable);
