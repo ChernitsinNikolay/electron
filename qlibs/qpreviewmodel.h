@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QModelIndex>
 #include "components/electron.h"
+#include "qlibs/qgraphicschip.h"
 
 class QPreviewModel : public QObject
 {
@@ -11,10 +12,17 @@ class QPreviewModel : public QObject
 public:
     explicit QPreviewModel(QObject *parent = 0, Electron *electron = 0);
 
+    ElectronItem *current() const;
+
 signals:
+    void currentUpdated();
 
 public slots:
     void currentChanged(QModelIndex current, QModelIndex previous);
+    void rotateLeft();
+    void rotateRight();
+    void reflectX();
+    void reflectY();
 
 private:
     Electron *m_electron;

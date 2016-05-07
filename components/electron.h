@@ -15,7 +15,7 @@ public:
     inline const ElectronTree *tree() const { return &m_tree; }
 
     bool setCurrent(const ElectronItem &item);
-    inline const ElectronItem &current() const { return m_current; }
+    inline ElectronItem *current() const { return m_current; }
 
     void rotateCurrent(float angle);
     void reflectCurrent(ElectronAxis axis);
@@ -23,7 +23,7 @@ public:
 private:
     bool xmlParse();
 
-    ElectronItem m_current;
+    ElectronItem *m_current;
     ElectronTree m_tree;
 };
 
