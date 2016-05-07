@@ -9,6 +9,7 @@ public:
     typedef ElectronImage::Axis Axis;
 
     ElectronElement();
+    ElectronElement(const ElectronElement &item);
 
     ElectronElement &operator=(const ElectronElement &item);
 
@@ -23,9 +24,15 @@ public:
     void rotate(float angle);
     void reflect(Axis axis);
 
+    void setPos(int x, int y);
+
+    inline int posX() const { return m_x; }
+    inline int posY() const { return m_y; }
+
 private:
     std::string m_name;
     ElectronImage m_image;
+    int m_x, m_y;
 };
 
 
