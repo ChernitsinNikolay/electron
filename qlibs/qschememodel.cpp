@@ -10,3 +10,8 @@ ElectronItem *QSchemeModel::current() const
 {
     return m_electron->current();
 }
+
+QGraphicsChip QSchemeModel::addItem(const QGraphicsChip &chip)
+{
+    return QGraphicsChip(m_electron->scheme()->addItem(*chip.boundItem()));
+}

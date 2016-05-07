@@ -6,9 +6,14 @@
 #define BUF_SIZE 1024
 
 Electron::Electron() :
-    m_current(0)
+    m_current(0), m_scheme(new ElectronScheme)
 {
     xmlParse();
+}
+
+Electron::~Electron()
+{
+    delete m_scheme;
 }
 
 bool Electron::xmlParse()

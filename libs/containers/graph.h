@@ -16,6 +16,7 @@ public:
     inline void add(const Edge &edge, std::size_t from, std::size_t to);
     inline void remove(std::size_t from, std::size_t to);
 
+    inline std::size_t size() const;
     inline Vertex *vertexAt(std::size_t i) const;
     inline std::size_t indexOf(const Vertex &vertex) const;
     inline std::size_t edgesAt(const Vertex &vertex) const;
@@ -38,6 +39,8 @@ private:
     private:
         std::vector<std::size_t> edgesIndex;
         Vertex *vertex;
+
+        friend Graph;
     };
 
     class EdgeCommunication
@@ -50,22 +53,34 @@ private:
         std::size_t from;
         std::size_t to;
         Edge *edge;
+
+        friend Graph;
     };
 
-    std::vector<VertexCommunication> v;
-    std::vector<EdgeCommunication> e;
+    std::vector<VertexCommunication*> v;
+    std::vector<EdgeCommunication*> e;
 };
 
 template <typename Vertex, typename Edge>
 Graph<Vertex, Edge>::Graph()
 {
-    //TODO
+}
+
+template <typename Vertex, typename Edge>
+Graph<Vertex, Edge>::~Graph()
+{
+    for(typename std::vector<VertexCommunication*>::iterator iter = v.begin(); iter != v.end(); iter++)
+        delete (*iter);
+    for(typename std::vector<EdgeCommunication*>::iterator iter = e.begin(); iter != e.end(); iter++)
+        delete (*iter);
 }
 
 template <typename Vertex, typename Edge>
 void Graph<Vertex, Edge>::add(const Vertex &vertex)
 {
-    //TODO
+    VertexCommunication *vc = new VertexCommunication();
+    vc->vertex = new Vertex(vertex);
+    v.push_back(vc);
 }
 
 template <typename Vertex, typename Edge>
@@ -93,9 +108,15 @@ void Graph<Vertex, Edge>::remove(std::size_t from, std::size_t to)
 }
 
 template <typename Vertex, typename Edge>
+std::size_t Graph<Vertex, Edge>::size() const
+{
+    return v.size();
+}
+
+template <typename Vertex, typename Edge>
 Vertex *Graph<Vertex, Edge>::vertexAt(std::size_t i) const
 {
-    return v[i];
+    return v[i]->vertex;
 }
 
 template <typename Vertex, typename Edge>
@@ -151,5 +172,21 @@ Vertex *Graph<Vertex, Edge>::vertexAtEdgeTo(const Edge &edge) const
 {
     //TODO
 }
+
+template <typename Vertex, typename Edge>
+Graph<Vertex, Edge>::VertexCommunication::VertexCommunication() :
+    vertex(0) { }
+
+template <typename Vertex, typename Edge>
+Graph<Vertex, Edge>::VertexCommunication::~VertexCommunication()
+{ delete vertex; }
+
+template <typename Vertex, typename Edge>
+Graph<Vertex, Edge>::EdgeCommunication::EdgeCommunication() :
+    edge(0) { }
+
+template <typename Vertex, typename Edge>
+Graph<Vertex, Edge>::EdgeCommunication::~EdgeCommunication()
+{ delete edge; }
 
 #endif // GRAPH_H

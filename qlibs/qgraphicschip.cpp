@@ -5,6 +5,20 @@
 QGraphicsChip::QGraphicsChip(ElectronItem *item) :
     m_eitem(item)
 {
+    initial();
+    QGraphicsItem::setPos(m_eitem->posX(), m_eitem->posY());
+    setScale(2);
+}
+
+QGraphicsChip::QGraphicsChip(const QGraphicsChip &chip) :
+    m_eitem(chip.m_eitem), bounding(chip.bounding)
+{
+    QGraphicsItem::setPos(m_eitem->posX(), m_eitem->posY());
+    setScale(2);
+}
+
+void QGraphicsChip::initial()
+{
     float maxX = 0;
     float minX = 0;
     float maxY = 0;
@@ -225,6 +239,11 @@ void QGraphicsChip::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
         painter->drawPath(path);
         painter->setPen(p);
     }*/
+}
+
+void QGraphicsChip::setPos(const QPointF &pos)
+{
+    setPos(pos.x(), pos.y());
 }
 
 void QGraphicsChip::mousePressEvent(QGraphicsSceneMouseEvent *event)

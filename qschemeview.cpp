@@ -22,7 +22,7 @@ void QSchemeView::mouseMoveEvent(QMouseEvent *event)
 {
     if(!m_current)
         return;
-    m_current->setPos(mapToScene(event->pos()));
+    static_cast<QGraphicsChip*>(m_current)->setPos(mapToScene(event->pos()));
 }
 
 void QSchemeView::mousePressEvent(QMouseEvent *event)
@@ -30,6 +30,12 @@ void QSchemeView::mousePressEvent(QMouseEvent *event)
     //std::cout<<"press"<<std::endl;
     switch(event->button()) {
     case Qt::LeftButton:
+        if(m_current) {
+            scene->addItem(new QGraphicsChip(m_model->addItem(*static_cast<QGraphicsChip*>(m_current))));
+            scene->removeItem(m_current);
+            m_current = NULL;
+            scene->update();
+        }
         break;
 
     case Qt::RightButton:
@@ -51,7 +57,6 @@ bool QSchemeView::event(QEvent *event)
         }
         m_current = new QGraphicsChip(m_model->current());
         scene->addItem(m_current);
-        m_current->setScale(2);
         break;
 
     case QEvent::Leave:
