@@ -60,14 +60,13 @@ void ElemWidget::setModel(QPreviewModel *model)
 
 void ElemWidget::curentChanged()
 {
-    foreach(QGraphicsItem *item, scene->items())
+    foreach(QGraphicsItem *item, scene->items()) {
         delete item;
+    }
     scene->items().clear();
     scene->update();
     QGraphicsItem *chip = new QGraphicsChip(m_model->current());
-    float sc = graphicsView->width() / chip->boundingRect().width() / 2.0;
-    std::cout<<sc<<std::endl;
     scene->addItem(chip);
-    chip->setScale(3.0);
+    chip->setScale(2);
 }
 

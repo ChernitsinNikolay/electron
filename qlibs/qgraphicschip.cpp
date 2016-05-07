@@ -91,7 +91,6 @@ QPainterPath QGraphicsChip::shape() const
 
 void QGraphicsChip::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-    std::cout<<"paint()"<<std::endl;
     Q_UNUSED(widget);
     Q_UNUSED(option);
 
