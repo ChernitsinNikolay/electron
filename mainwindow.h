@@ -7,6 +7,7 @@
 #include "components/electron.h"
 #include "qlibs/qtreemodel.h"
 #include "qlibs/qpreviewmodel.h"
+#include "qlibs/qschememodel.h"
 #include <QTreeView>
 #include <QPushButton>
 #include <QGraphicsView>
@@ -26,6 +27,7 @@ private:
     Electron *m_electron;
     QTreeModel *treeModel;
     QPreviewModel *preview;
+    QSchemeModel *scheme;
     QTreeView *TreeV;
     QGraphicsView *Scheme;
     ElemWidget *Elem;

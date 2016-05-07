@@ -10,12 +10,13 @@
 #include <QWidget>
 #include <QSplitter>
 #include <QMenuBar>
+#include "qschemeview.h"
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), treeModel(0), preview(0)
+    : QMainWindow(parent), treeModel(0), preview(0), scheme(0)
 {
     Elem = new ElemWidget;
-    Scheme = new QGraphicsView;
+    Scheme = new QSchemeView;
     TreeV = new QTreeView(this);
     TreeV->setUniformRowHeights(true);
     TreeV->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -50,9 +51,12 @@ void MainWindow::setElectron(Electron *electron)
     TreeV->setModel(0);
     delete treeModel;
     delete preview;
+    delete scheme;
     treeModel = new QTreeModel(this, m_electron->tree());
-    preview = new QPreviewModel(this, electron);
+    preview = new QPreviewModel(this, m_electron);
+    scheme = new QSchemeModel(this, m_electron);
     TreeV->setModel(treeModel);
     Elem->setModel(preview);
+    static_cast<QSchemeView*>(Scheme)->setModel(scheme);
     connect(TreeV->selectionModel(), SIGNAL(currentChanged(QModelIndex,QModelIndex)), preview, SLOT(currentChanged(QModelIndex,QModelIndex)));
 }
