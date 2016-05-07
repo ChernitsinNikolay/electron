@@ -49,7 +49,8 @@ HEADERS  += mainwindow.h \
     components/electronimage.h \
     qschemeview.h \
     components/electronscheme.h \
-    qlibs/qschememodel.h
+    qlibs/qschememodel.h \
+    libs/containers/graph.h
 
 RESOURCES += \
     images.qrc
