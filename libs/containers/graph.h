@@ -40,7 +40,7 @@ private:
         std::vector<std::size_t> edgesIndex;
         Vertex *vertex;
 
-        friend Graph;
+        friend class Graph;
     };
 
     class EdgeCommunication
@@ -54,7 +54,7 @@ private:
         std::size_t to;
         Edge *edge;
 
-        friend Graph;
+        friend class Graph;
     };
 
     std::vector<VertexCommunication*> v;

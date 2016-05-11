@@ -89,7 +89,16 @@ bool Electron::xmlParse()
                         break;
                     }
                 }
-            }
+            }/* else if((std::string(*iter)).compare(0, 6, "<joins") == 0) {
+                for(std::vector<std::string>::iterator iter2 = iter + 1; iter2 != vlex.end(); iter2++) {
+                    if((std::string(*iter2)).compare(0, 8, "</joins>") == 0) {
+                        ElectronContact contact;
+                        contact.parse(iter, iter2 + 1);
+                        ttree->value().setContact(contact);
+                        break;
+                    }
+                }
+            }*/
             break;
         }
     }

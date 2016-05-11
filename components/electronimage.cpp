@@ -169,6 +169,11 @@ Basic::Join::Join()
 {
 }
 
+Basic::Join::Join(const Join &join)
+{
+    pos = join.pos;
+}
+
 Basic::Join Basic::Join::operator =(const Join &join)
 {
     pos = join.pos;

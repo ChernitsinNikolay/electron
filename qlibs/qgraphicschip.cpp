@@ -1,20 +1,27 @@
 #include "qgraphicschip.h"
 #include <QPainter>
+#include <QGraphicsSceneContextMenuEvent>
 #include <iostream>
 
+#define EPS 1.0
+
 QGraphicsChip::QGraphicsChip(ElectronItem *item) :
-    m_eitem(item)
+    QGraphicsObject(NULL), m_eitem(item), selected_join(NULL), m_selected(false), m_complete(false), m_color(Qt::black)
 {
     initial();
     QGraphicsItem::setPos(m_eitem->posX(), m_eitem->posY());
     setScale(2);
+    setAcceptHoverEvents(true);
+    createContextMenu();
 }
 
 QGraphicsChip::QGraphicsChip(const QGraphicsChip &chip) :
-    m_eitem(chip.m_eitem), bounding(chip.bounding)
+    QGraphicsObject(NULL), m_eitem(chip.m_eitem), bounding(chip.bounding), selected_join(NULL), m_complete(false), m_selected(false), m_color(Qt::black)
 {
     QGraphicsItem::setPos(m_eitem->posX(), m_eitem->posY());
     setScale(2);
+    setAcceptHoverEvents(true);
+    createContextMenu();
 }
 
 void QGraphicsChip::initial()
@@ -89,6 +96,22 @@ void QGraphicsChip::initial()
     //std::cout<<bounding.x()<<"\t"<<bounding.y()<<"\t"<<bounding.width()<<"\t"<<bounding.height()<<std::endl;
 }
 
+void QGraphicsChip::createContextMenu()
+{
+    m_menu.addAction(QString::fromUtf8("Редактировать"))->setEnabled(false);
+    QAction *a_del = m_menu.addAction(QString::fromUtf8("Удалить"));
+    m_menu.addSeparator();
+    m_menu.addAction(QString::fromUtf8("Копировать"))->setEnabled(false);
+    m_menu.addAction(QString::fromUtf8("Вырезать"))->setEnabled(false);
+    m_menu.addSeparator();
+    m_menu.addAction(QString::fromUtf8("Повернуть 90"))->setEnabled(false);
+    m_menu.addAction(QString::fromUtf8("Повернуть -90"))->setEnabled(false);
+    m_menu.addAction(QString::fromUtf8("Отразить X"))->setEnabled(false);
+    m_menu.addAction(QString::fromUtf8("Отразить Y"))->setEnabled(false);
+
+    connect(a_del, SIGNAL(triggered()), SLOT(userDelete()));
+}
+
 QRectF QGraphicsChip::boundingRect() const
 {
     //return QRectF(-50, -50, 50, 50);
@@ -107,6 +130,8 @@ void QGraphicsChip::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
 {
     Q_UNUSED(widget);
     Q_UNUSED(option);
+
+    painter->setPen(m_color);
 
     /*QPolygonF br;
     br.push_back(QPointF(bounding.x(), bounding.y()));
@@ -146,9 +171,15 @@ void QGraphicsChip::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
         painter->drawText(string.x(), string.y(), QString::fromStdString(string.string()));
     }
     //Joins;
-    for(ElectronImage::Joins::const_iterator iter = m_eitem->image().joins().begin(); iter != m_eitem->image().joins().end(); iter++) {
+    /*for(ElectronImage::Joins::const_iterator iter = m_eitem->image().joins().begin(); iter != m_eitem->image().joins().end(); iter++) {
         const Basic::Join join = *iter;
+        painter->setPen(QPen(QBrush(Qt::red), 3));
         painter->drawPoint(join.x(), join.y());
+    }*/
+
+    if(selected_join) {
+        painter->setPen(QPen(QBrush(Qt::red), 3));
+        painter->drawPoint(selected_join->x(), selected_join->y());
     }
 
     /*QColor fillColor = (option->state & QStyle::State_Selected) ? color.dark(150) : color;
@@ -246,9 +277,62 @@ void QGraphicsChip::setPos(const QPointF &pos)
     setPos(pos.x(), pos.y());
 }
 
+void QGraphicsChip::setComplete(bool st)
+{
+    m_complete = st;
+}
+
+void QGraphicsChip::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
+{
+    if(!m_complete)
+        return;
+    Q_UNUSED(event);
+    m_selected = true;
+    m_color = Qt::red;
+    update();
+}
+
+void QGraphicsChip::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
+{
+    if(!m_complete)
+        return;
+    delete selected_join;
+    selected_join = NULL;
+    if(m_selected) {
+        for(ElectronImage::Joins::const_iterator iter = m_eitem->image().joins().begin(); iter != m_eitem->image().joins().end(); iter++) {
+            const Basic::Join join = (*iter);
+            QPointF pos = event->pos();
+            if(std::abs(pos.x() - join.x()) < EPS && std::abs(pos.y() - join.y()) < EPS) {
+                selected_join = new Basic::Join(join);
+                break;
+            }
+        }
+    }
+    update();
+}
+
+void QGraphicsChip::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+{
+    if(!m_complete)
+        return;
+    Q_UNUSED(event);
+    m_selected = false;
+    delete selected_join;
+    selected_join = NULL;
+    m_color = Qt::black;
+    update();
+}
+
 void QGraphicsChip::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     QGraphicsItem::mousePressEvent(event);
+    if(!m_complete)
+        return;
+    if(event->button() == Qt::LeftButton) {
+        if(selected_join) {
+            emit clickToContact(mapToScene(selected_join->x(), selected_join->y()));
+        }
+    }
     update();
 }
 
@@ -262,4 +346,14 @@ void QGraphicsChip::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     QGraphicsItem::mouseReleaseEvent(event);
     update();
+}
+
+void QGraphicsChip::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
+{
+    m_menu.popup(event->screenPos());
+}
+
+void QGraphicsChip::userDelete()
+{
+    emit deleteMe();
 }

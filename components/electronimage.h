@@ -133,6 +133,7 @@ namespace Basic {
     {
     public:
         Join();
+        Join(const Join &join);
 
         Join operator=(const Join &join);
         virtual std::string parse(std::string token, size_t *idx);

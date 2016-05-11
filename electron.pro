@@ -33,7 +33,10 @@ SOURCES += main.cpp\
     qschemeview.cpp \
     components/electronscheme.cpp \
     qlibs/qschememodel.cpp \
-    components/electronwire.cpp
+    components/electronwire.cpp \
+    components/electroncontact.cpp \
+    qlibs/qgraphicswire.cpp \
+    qlibs/qgraphicsgrid.cpp
 
 HEADERS  += mainwindow.h \
     qlibs/qtreemodel.h \
@@ -52,7 +55,10 @@ HEADERS  += mainwindow.h \
     components/electronscheme.h \
     qlibs/qschememodel.h \
     libs/containers/graph.h \
-    components/electronwire.h
+    components/electronwire.h \
+    components/electroncontact.h \
+    qlibs/qgraphicswire.h \
+    qlibs/qgraphicsgrid.h
 
 RESOURCES += \
     images.qrc
