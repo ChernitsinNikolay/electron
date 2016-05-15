@@ -10,6 +10,19 @@ public:
     ElectronScheme();
 
     ElectronElement *addItem(const ElectronElement &item);
+    void deleteItem(const ElectronElement &item);
+    ElectronWire *addWire(const ElectronWire &wire, const ElectronElement &from, const ElectronElement &to);
+    void deleteWire(const ElectronWire &wire);
+
+    ElectronWire *wireAt(size_t i) const;
+    ElectronElement *chipAt(size_t i) const;
+
+    void newScheme();
+    void saveToFile(const std::string &filename);
+    bool loadFromFile(const std::string &filename);
+
+    size_t wsize() const;
+    size_t csize() const;
 
 private:
     Graph<ElectronElement, ElectronWire> m_scheme;

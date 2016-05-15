@@ -1,5 +1,9 @@
 #include "electronelement.h"
 
+bool operator==(const ElectronElement& left, const ElectronElement& right){
+    return left.m_name == right.m_name && left.m_x == right.m_x && left.m_y == right.m_y && left.m_image == right.m_image;
+}
+
 ElectronElement::ElectronElement() :
     m_x(0), m_y(0)
 {

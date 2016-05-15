@@ -22,6 +22,7 @@ namespace Basic {
     {
     public:
         Point();
+        Point(float x, float y);
 
         Point operator=(const Point &point);
         virtual std::string parse(std::string token, size_t *idx);
@@ -182,6 +183,10 @@ private:
     Arrows m_arrows;
     Strings m_strings;
     Joins m_joins;
+
+    friend bool operator==(const ElectronImage& left, const ElectronImage& right);
 };
+
+bool operator==(const ElectronImage& left, const ElectronImage& right);
 
 #endif // ELECTRONIMAGE_H

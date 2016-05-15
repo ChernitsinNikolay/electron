@@ -22,6 +22,9 @@ public:
 
 public slots:
     void setElectron(Electron *electron);
+    void newScheme();
+    void openScheme();
+    void saveScheme();
 
 private:
     Electron *m_electron;
@@ -31,6 +34,7 @@ private:
     QTreeView *TreeV;
     QGraphicsView *Scheme;
     ElemWidget *Elem;
+    QMenu *mfile, *mview, *medit, *mhelp;
 };
 
 #endif // MAINWINDOW_H

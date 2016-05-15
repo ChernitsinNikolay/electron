@@ -26,6 +26,11 @@ ElemWidget::ElemWidget(QWidget *parent) :
     RefY->setIcon(QIcon(":/updown.png"));
     RefY->setIconSize(QSize(35,35));
 
+    RotLeft->setEnabled(false);
+    RotRight->setEnabled(false);
+    RefX->setEnabled(false);
+    RefY->setEnabled(false);
+
     graphicsView = new QGraphicsView;
 
     scene = new QGraphicsScene;

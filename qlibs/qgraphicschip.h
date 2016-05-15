@@ -9,8 +9,10 @@ class QGraphicsChip : public QGraphicsObject
 {
     Q_OBJECT
 public:
-    QGraphicsChip(ElectronItem *item);
+    QGraphicsChip(ElectronItem *item = NULL);
     QGraphicsChip(const QGraphicsChip &chip);
+
+    QGraphicsChip &operator=(const QGraphicsChip &item);
 
     inline ElectronItem *boundItem() const { return m_eitem; }
     QRectF boundingRect() const Q_DECL_OVERRIDE;
@@ -21,6 +23,11 @@ public:
     inline void setPos(qreal x, qreal y);
 
     void setComplete(bool st = true);
+
+    enum {
+        QChip = 65534
+    };
+    virtual int type() const;
 
 protected:
     virtual void hoverEnterEvent(QGraphicsSceneHoverEvent* event);

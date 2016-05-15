@@ -38,7 +38,11 @@ private:
     ElectronImage m_image;
     //ElectronContact m_contact;
     int m_x, m_y;
+
+    friend bool operator==(const ElectronElement& left, const ElectronElement& right);
 };
+
+bool operator==(const ElectronElement& left, const ElectronElement& right);
 
 
 #endif // ELECTRONELEMENT_H

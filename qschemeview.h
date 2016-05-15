@@ -18,6 +18,7 @@ protected:
     bool event(QEvent *event);
 
 public slots:
+    void updateModel();
     void setModel(QSchemeModel *model);
     void wire(const QPointF &point);
     void userDeleteItemChip();

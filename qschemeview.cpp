@@ -26,6 +26,29 @@ QPointF QSchemeView::mapToGridScene(const QPoint &point) const
 void QSchemeView::setModel(QSchemeModel *model)
 {
     m_model = model;
+    connect(m_model, SIGNAL(updated()), SLOT(updateModel()));
+}
+
+void QSchemeView::updateModel()
+{
+    m_current = NULL;
+    m_current_wire = NULL;
+    for(QGraphicsItem *item : scene->items()) {
+        if(item->type() == QGraphicsWire::QWire || item->type() == QGraphicsChip::QChip) {
+            scene->removeItem(item);
+        }
+    }
+    for(QGraphicsChip tchip : m_model->chips()) {
+        QGraphicsChip *chip = new QGraphicsChip(tchip);
+        scene->addItem(chip);
+        chip->setComplete();
+        connect(chip, SIGNAL(deleteMe()), SLOT(userDeleteItemChip()));
+    }
+    for(QGraphicsWire twire : m_model->wires()) {
+        QGraphicsWire *wire = new QGraphicsWire(twire);
+        scene->addItem(wire);
+        connect(wire, SIGNAL(deleteMe()), SLOT(userDeleteItemWire()));
+    }
 }
 
 void QSchemeView::wire(const QPointF &point)
@@ -38,34 +61,47 @@ void QSchemeView::wire(const QPointF &point)
     if(!m_current_wire) {
         std::cout<<"start wire"<<std::endl;
         m_current_wire = new QGraphicsWire();
+        m_current_wire->setFromItem((QGraphicsChip*)sender());
         scene->addItem(m_current_wire);
         connect(m_current_wire, SIGNAL(deleteMe()), SLOT(userDeleteItemWire()));
         m_current_wire->setPos(point);
         m_current_wire->addPoint(point);
-        //m_current_wire = new QGraphicsWire(QPointF(0, 0), *qobject_cast<QGraphicsObject*>(sender()));
-        //m_current_wire->setEndPoint(QPointF(0, -100));
-        //m_current_wire->setPos(point);
-        //scene->addItem(m_current_wire);
-        //scene->update();
     } else {
         std::cout<<"end wire"<<std::endl;
-        m_current_wire->setComplete();
+        if(m_current_wire->setComplete()) {
+            m_current_wire->setToItem((QGraphicsChip*)sender());
+            QGraphicsWire *wire = new QGraphicsWire(m_model->addWire(*m_current_wire));
+            scene->addItem(wire);
+            connect(wire, SIGNAL(deleteMe()), SLOT(userDeleteItemWire()));
+        }
+        scene->removeItem(m_current_wire);
         m_current_wire = NULL;
-        //m_current_wire->addCompletePoint(point, *qobject_cast<QGraphicsObject*>(sender()));
-        //m_current_wire = NULL;
-        //scene->update();
+        scene->update();
     }
 }
 
 void QSchemeView::userDeleteItemChip()
 {
-    QGraphicsItem *item = (QGraphicsChip*)sender();
+    for(QGraphicsItem *item : scene->items()) {
+        if(item->type() == QGraphicsWire::QWire) {
+            scene->removeItem(item);
+        }
+    }
+    QGraphicsChip *item = (QGraphicsChip*)sender();
+    m_model->deleteItem(*item);
     scene->removeItem(item);
+    for(QGraphicsWire twire : m_model->wires()) {
+        QGraphicsWire *wire = new QGraphicsWire(twire);
+        scene->addItem(wire);
+        connect(wire, SIGNAL(deleteMe()), SLOT(userDeleteItemWire()));
+    }
+    scene->update();
 }
 
 void QSchemeView::userDeleteItemWire()
 {
-    QGraphicsItem *item = (QGraphicsWire*)sender();
+    QGraphicsWire *item = (QGraphicsWire*)sender();
+    m_model->deleteWire(*item);
     scene->removeItem(item);
 }
 
@@ -135,7 +171,7 @@ bool QSchemeView::event(QEvent *event)
     //std::cout<<event->type()<<std::endl;
     switch(event->type()) {
     case QEvent::Resize:
-        std::cout<<"resize"<<std::endl;
+        //std::cout<<"resize"<<std::endl;
         break;
 
     case QEvent::Enter:

@@ -24,6 +24,10 @@ public:
     void rotateCurrent(float angle);
     void reflectCurrent(ElectronAxis axis);
 
+    inline void newScheme() { m_scheme->newScheme(); }
+    inline void saveToFile(const std::string &filename) { m_scheme->saveToFile(filename); }
+    inline bool loadFromFile(const std::string &filename) { return m_scheme->loadFromFile(filename); }
+
 private:
     bool xmlParse();
 

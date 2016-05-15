@@ -1,8 +1,20 @@
 #include "electronimage.h"
 #include <iostream>
 
+bool operator==(const ElectronImage& left, const ElectronImage& right) {
+    return left.m_rects.size() == right.m_rects.size() && left.m_arcs.size() == right.m_arcs.size()
+            && left.m_lines.size() == right.m_lines.size() && left.m_arrows.size() == right.m_arrows.size()
+            && left.m_strings.size() == right.m_strings.size() && left.m_joins.size() == right.m_joins.size();
+}
+
 Basic::Point::Point()
 {
+}
+
+Basic::Point::Point(float x, float y)
+{
+    m_x = x;
+    m_y = y;
 }
 
 Basic::Point Basic::Point::operator =(const Point &point)

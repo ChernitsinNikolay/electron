@@ -9,7 +9,8 @@ QGraphicsChip::QGraphicsChip(ElectronItem *item) :
     QGraphicsObject(NULL), m_eitem(item), selected_join(NULL), m_selected(false), m_complete(false), m_color(Qt::black)
 {
     initial();
-    QGraphicsItem::setPos(m_eitem->posX(), m_eitem->posY());
+    if(m_eitem)
+        QGraphicsItem::setPos(m_eitem->posX(), m_eitem->posY());
     setScale(2);
     setAcceptHoverEvents(true);
     createContextMenu();
@@ -18,10 +19,27 @@ QGraphicsChip::QGraphicsChip(ElectronItem *item) :
 QGraphicsChip::QGraphicsChip(const QGraphicsChip &chip) :
     QGraphicsObject(NULL), m_eitem(chip.m_eitem), bounding(chip.bounding), selected_join(NULL), m_complete(false), m_selected(false), m_color(Qt::black)
 {
-    QGraphicsItem::setPos(m_eitem->posX(), m_eitem->posY());
+    if(m_eitem)
+        QGraphicsItem::setPos(m_eitem->posX(), m_eitem->posY());
     setScale(2);
     setAcceptHoverEvents(true);
     createContextMenu();
+}
+
+QGraphicsChip &QGraphicsChip::operator =(const QGraphicsChip &chip)
+{
+    m_eitem = chip.m_eitem;
+    bounding = chip.bounding;
+    selected_join = chip.selected_join;
+    m_complete = chip.m_complete;
+    m_selected = chip.m_selected;
+    m_color = chip.m_color;
+    if(m_eitem)
+        QGraphicsItem::setPos(m_eitem->posX(), m_eitem->posY());
+    setScale(2);
+    setAcceptHoverEvents(true);
+    createContextMenu();
+    return *this;
 }
 
 void QGraphicsChip::initial()
@@ -280,6 +298,11 @@ void QGraphicsChip::setPos(const QPointF &pos)
 void QGraphicsChip::setComplete(bool st)
 {
     m_complete = st;
+}
+
+int QGraphicsChip::type() const
+{
+    return QChip;
 }
 
 void QGraphicsChip::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
