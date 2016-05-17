@@ -2,7 +2,17 @@
 #define GRAPH_H
 
 #include <vector>
+#include "myallocator.h"
 
+//serial        +
+//deserial      +
+//iterator
+//allocator
+//algoritm
+//throw
+
+//template <typename Vertex, typename Edge, typename VertexAllocator = std::allocator<Vertex>, typename EdgeAllocator = std::allocator<Edge>>
+//template <typename Vertex, typename Edge, typename VertexAllocator = MyAllocator>
 template <typename Vertex, typename Edge>
 class Graph
 {

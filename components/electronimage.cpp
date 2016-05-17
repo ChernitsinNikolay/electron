@@ -40,6 +40,17 @@ void Basic::Point::rotate(float angle)
 {
 }
 
+std::string Basic::Point::toString() const
+{
+    std::string str;
+    str += "<point>";
+    str += std::to_string(m_x);
+    str += ";";
+    str += std::to_string(-m_y);
+    str += "</point>";
+    return str;
+}
+
 Basic::Rectangle::Rectangle()
 {
 }
@@ -67,6 +78,21 @@ void Basic::Rectangle::reflect(Axis axis)
 
 void Basic::Rectangle::rotate(float angle)
 {
+}
+
+std::string Basic::Rectangle::toString() const
+{
+    std::string str;
+    str += "<rectangle>";
+    str += std::to_string(pos.x());
+    str += ";";
+    str += std::to_string(-pos.y());
+    str += ";";
+    str += std::to_string(width);
+    str += ";";
+    str += std::to_string(height);
+    str += "</rectangle>";
+    return str;
 }
 
 Basic::Arc::Arc()
@@ -99,6 +125,25 @@ void Basic::Arc::rotate(float angle)
 {
 }
 
+std::string Basic::Arc::toString() const
+{
+    std::string str;
+    str += "<arc>";
+    str += std::to_string(rect.x());
+    str += ";";
+    str += std::to_string(-rect.y());
+    str += ";";
+    str += std::to_string(rect.w());
+    str += ";";
+    str += std::to_string(rect.h());
+    str += ";";
+    str += std::to_string(startAngle);
+    str += ";";
+    str += std::to_string(sweepAngle);
+    str += "</arc>";
+    return str;
+}
+
 Basic::Line::Line()
 {
 }
@@ -123,6 +168,21 @@ void Basic::Line::reflect(Axis axis)
 
 void Basic::Line::rotate(float angle)
 {
+}
+
+std::string Basic::Line::toString() const
+{
+    std::string str;
+    str += "<line>";
+    str += std::to_string(start.x());
+    str += ";";
+    str += std::to_string(-start.y());
+    str += ";";
+    str += std::to_string(end.x());
+    str += ";";
+    str += std::to_string(-end.y());
+    str += "</line>";
+    return str;
 }
 
 Basic::Arrow::Arrow()
@@ -151,6 +211,23 @@ void Basic::Arrow::rotate(float angle)
 {
 }
 
+std::string Basic::Arrow::toString() const
+{
+    std::string str;
+    str += "<arrow>";
+    str += std::to_string(line.sx());
+    str += ";";
+    str += std::to_string(-line.sy());
+    str += ";";
+    str += std::to_string(line.ex());
+    str += ";";
+    str += std::to_string(-line.ey());
+    str += ";";
+    str += std::to_string(h);
+    str += "</arrow>";
+    return str;
+}
+
 Basic::String::String()
 {
 }
@@ -175,6 +252,19 @@ void Basic::String::reflect(Axis axis)
 
 void Basic::String::rotate(float angle)
 {
+}
+
+std::string Basic::String::toString() const
+{
+    std::string str;
+    str += "<string>";
+    str += std::to_string(point.x());
+    str += ";";
+    str += std::to_string(-point.y());
+    str += ";";
+    str += this->str;
+    str += "</string>";
+    return str;
 }
 
 Basic::Join::Join()
@@ -205,6 +295,17 @@ void Basic::Join::reflect(Axis axis)
 
 void Basic::Join::rotate(float angle)
 {
+}
+
+std::string Basic::Join::toString() const
+{
+    std::string str;
+    str += "<join>";
+    str += std::to_string(pos.x());
+    str += ";";
+    str += std::to_string(-pos.y());
+    str += "</join>";
+    return str;
 }
 
 ElectronImage::ElectronImage()
@@ -356,4 +457,24 @@ bool ElectronImage::parse(const vsit &begin, const vsit &end)
 
     }*/
     return st == 0;
+}
+
+std::string ElectronImage::toString() const
+{
+    std::string str;
+    str += "<image>";
+    for(Rectangles::const_iterator iter = m_rects.begin(); iter != m_rects.end(); iter++)
+        str += (*iter).toString();
+    for(Arcs::const_iterator iter = m_arcs.begin(); iter != m_arcs.end(); iter++)
+        str += (*iter).toString();
+    for(Lines::const_iterator iter = m_lines.begin(); iter != m_lines.end(); iter++)
+        str += (*iter).toString();
+    for(Arrows::const_iterator iter = m_arrows.begin(); iter != m_arrows.end(); iter++)
+        str += (*iter).toString();
+    for(Strings::const_iterator iter = m_strings.begin(); iter != m_strings.end(); iter++)
+        str += (*iter).toString();
+    for(Joins::const_iterator iter = m_joins.begin(); iter != m_joins.end(); iter++)
+        str += (*iter).toString();
+    str += "</image>";
+    return str;
 }

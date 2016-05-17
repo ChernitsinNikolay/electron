@@ -14,6 +14,8 @@ public:
 
     ElectronElement &operator=(const ElectronElement &item);
 
+    ElectronElement(const std::vector<std::string>::iterator &begin, const std::vector<std::string>::iterator &end);
+
     inline bool isItem() const { return true; } //TODO
 
     inline void setName(const std::string &name) { m_name = name; }
@@ -32,6 +34,8 @@ public:
 
     inline int posX() const { return m_x; }
     inline int posY() const { return m_y; }
+
+    std::string toString() const;
 
 private:
     std::string m_name;

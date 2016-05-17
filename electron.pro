@@ -58,7 +58,8 @@ HEADERS  += mainwindow.h \
     components/electronwire.h \
     components/electroncontact.h \
     qlibs/qgraphicswire.h \
-    qlibs/qgraphicsgrid.h
+    qlibs/qgraphicsgrid.h \
+    libs/containers/myallocator.h
 
 RESOURCES += \
     images.qrc

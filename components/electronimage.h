@@ -16,6 +16,7 @@ namespace Basic {
         virtual std::string parse(std::string token, size_t *idx) = 0;
         virtual void rotate(float angle) = 0;
         virtual void reflect(Axis axis) = 0;
+        virtual std::string toString() const = 0;
     };
 
     class Point : public ImageItem
@@ -28,6 +29,7 @@ namespace Basic {
         virtual std::string parse(std::string token, size_t *idx);
         virtual void rotate(float angle);
         virtual void reflect(Axis axis);
+        virtual std::string toString() const;
 
         inline float x() const { return m_x; }
         inline float y() const { return -m_y; }
@@ -45,6 +47,7 @@ namespace Basic {
         virtual std::string parse(std::string token, size_t *idx);
         virtual void rotate(float angle);
         virtual void reflect(Axis axis);
+        virtual std::string toString() const;
 
         inline float x() const { return pos.x(); }
         inline float y() const { return pos.y(); }
@@ -65,6 +68,7 @@ namespace Basic {
         virtual std::string parse(std::string token, size_t *idx);
         virtual void rotate(float angle);
         virtual void reflect(Axis axis);
+        virtual std::string toString() const;
 
         inline Rectangle rectangle() const { return rect; }
         inline float sAngle() const { return startAngle; }
@@ -84,6 +88,7 @@ namespace Basic {
         virtual std::string parse(std::string token, size_t *idx);
         virtual void rotate(float angle);
         virtual void reflect(Axis axis);
+        virtual std::string toString() const;
 
         inline float sx() const { return start.x(); }
         inline float sy() const { return start.y(); }
@@ -103,6 +108,7 @@ namespace Basic {
         virtual std::string parse(std::string token, size_t *idx);
         virtual void rotate(float angle);
         virtual void reflect(Axis axis);
+        virtual std::string toString() const;
 
         //???
 
@@ -120,6 +126,7 @@ namespace Basic {
         virtual std::string parse(std::string token, size_t *idx);
         virtual void rotate(float angle);
         virtual void reflect(Axis axis);
+        virtual std::string toString() const;
 
         inline float x() const { return point.x(); }
         inline float y() const { return point.y(); }
@@ -140,6 +147,7 @@ namespace Basic {
         virtual std::string parse(std::string token, size_t *idx);
         virtual void rotate(float angle);
         virtual void reflect(Axis axis);
+        virtual std::string toString() const;
 
         inline float x() const { return pos.x(); }
         inline float y() const { return pos.y(); }
@@ -175,6 +183,8 @@ public:
     inline const Arrows &arrows() const { return m_arrows; }
     inline const Strings &strings() const { return m_strings; }
     inline const Joins &joins() const { return m_joins; }
+
+    std::string toString() const;
 
 private:
     Rectangles m_rects;
