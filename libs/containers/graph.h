@@ -2,6 +2,7 @@
 #define GRAPH_H
 
 #include <vector>
+#include "myexception.h"
 #include "myallocator.h"
 
 //serial        +
@@ -9,7 +10,7 @@
 //iterator      +
 //allocator     +
 //algoritm
-//throw
+//throw         +
 
 //template <typename Vertex, typename Edge, template <typename> class Alloc = std::allocator>
 template <typename Vertex, typename Edge, template <typename> class Alloc = MyAllocator>
@@ -26,18 +27,18 @@ public:
     Graph();
     virtual ~Graph();
 
-    inline void add(const Vertex &vertex);
-    inline void remove(const Vertex &vertex);
-    inline void removeAt(std::size_t i);
-    inline void add(const Edge &edge, std::size_t from, std::size_t to);
+    inline void add(const Vertex &vertex) throw(AllocException);
+    inline bool remove(const Vertex &vertex);
+    inline void removeAt(std::size_t i) throw(OutOfRangeException);
+    inline void add(const Edge &edge, std::size_t from, std::size_t to) throw(AllocException);
     //inline void remove(std::size_t from, std::size_t to);
-    inline void remove(const Edge &edge);
-    inline void removeEdgeAt(std::size_t i);
+    inline bool remove(const Edge &edge);
+    inline void removeEdgeAt(std::size_t i) throw(OutOfRangeException);
 
     inline std::size_t size() const;
     inline std::size_t esize() const;
-    inline Vertex *vertexAt(std::size_t i) const;
-    inline Edge *edgeAt(std::size_t i) const;
+    inline Vertex *vertexAt(std::size_t i) const throw(OutOfRangeException);
+    inline Edge *edgeAt(std::size_t i) const throw(OutOfRangeException);
     inline std::size_t indexOf(const Vertex &vertex) const;
     inline std::size_t indexOf(const Edge &edge) const;
     /*inline std::size_t edgesAt(const Vertex &vertex) const;
@@ -50,8 +51,8 @@ public:
     inline Vertex *vertexAtEdgeFrom(const Edge &edge) const;
     inline Vertex *vertexAtEdgeTo(const Edge &edge) const;*/
 
-    inline std::size_t vertexIndexFromEdgeIndex(std::size_t i) const;
-    inline std::size_t vertexIndexToEdgeIndex(std::size_t i) const;
+    inline std::size_t vertexIndexFromEdgeIndex(std::size_t i) const throw(OutOfRangeException);
+    inline std::size_t vertexIndexToEdgeIndex(std::size_t i) const throw(OutOfRangeException);
 
     iterator begin();
     //const_iterator begin() const;
@@ -81,22 +82,34 @@ Graph<Vertex, Edge, Alloc>::~Graph()
 }
 
 template <typename Vertex, typename Edge, template <typename> class Alloc>
-void Graph<Vertex, Edge, Alloc>::add(const Vertex &vertex)
+void Graph<Vertex, Edge, Alloc>::add(const Vertex &vertex) throw(AllocException)
 {
-    VertexCommunication *vc = new VertexCommunication();
-    vc->vertex = new Vertex(vertex);
+    VertexCommunication *vc = 0;
+    try {
+        vc = new VertexCommunication();
+        vc->vertex = new Vertex(vertex);
+    } catch(std::exception) {
+        delete vc;
+        throw AllocException();
+    }
     v.push_back(vc);
 }
 
 template <typename Vertex, typename Edge, template <typename> class Alloc>
-void Graph<Vertex, Edge, Alloc>::remove(const Vertex &vertex)
+bool Graph<Vertex, Edge, Alloc>::remove(const Vertex &vertex)
 {
-    removeAt(indexOf(vertex));
+    std::size_t i = indexOf(vertex);
+    if(i < 0)
+        return false;
+    removeAt(i);
+    return true;
 }
 
 template <typename Vertex, typename Edge, template <typename> class Alloc>
-void Graph<Vertex, Edge, Alloc>::removeAt(std::size_t i)
+void Graph<Vertex, Edge, Alloc>::removeAt(std::size_t i)  throw(OutOfRangeException)
 {
+    if(i < 0 || i >= v.size())
+        throw OutOfRangeException();
     VertexCommunication *vc = v.at(i);
     while(!vc->edgesIndex.empty())
         removeEdgeAt(vc->edgesIndex.at(0));
@@ -111,10 +124,16 @@ void Graph<Vertex, Edge, Alloc>::removeAt(std::size_t i)
 }
 
 template <typename Vertex, typename Edge, template <typename> class Alloc>
-void Graph<Vertex, Edge, Alloc>::add(const Edge &edge, std::size_t from, std::size_t to)
+void Graph<Vertex, Edge, Alloc>::add(const Edge &edge, std::size_t from, std::size_t to) throw(AllocException)
 {
-    EdgeCommunication *ec = new EdgeCommunication();
-    ec->edge = new Edge(edge);
+    EdgeCommunication *ec = 0;
+    try {
+        ec = new EdgeCommunication();
+        ec->edge = new Edge(edge);
+    } catch(std::exception) {
+        delete ec;
+        throw AllocException();
+    }
     ec->from = from;
     ec->to = to;
     v.at(from)->edgesIndex.push_back(e.size());
@@ -129,14 +148,20 @@ void Graph<Vertex, Edge>::remove(std::size_t from, std::size_t to)
 }*/
 
 template <typename Vertex, typename Edge, template <typename> class Alloc>
-void Graph<Vertex, Edge, Alloc>::remove(const Edge &edge)
+bool Graph<Vertex, Edge, Alloc>::remove(const Edge &edge)
 {
-    removeEdgeAt(indexOf(edge));
+    std::size_t i = indexOf(edge);
+    if(i < 0)
+        return false;
+    removeEdgeAt(i);
+    return true;
 }
 
 template <typename Vertex, typename Edge, template <typename> class Alloc>
-void Graph<Vertex, Edge, Alloc>::removeEdgeAt(std::size_t i)
+void Graph<Vertex, Edge, Alloc>::removeEdgeAt(std::size_t i) throw(OutOfRangeException)
 {
+    if(i < 0 || i >= e.size())
+        throw OutOfRangeException();
     EdgeCommunication *ec = e.at(i);
     for(size_t t = 0; t < v.size(); t++) {
         for(std::vector<std::size_t>::iterator iter = v.at(t)->edgesIndex.begin(); iter != v.at(t)->edgesIndex.end(); iter++) {
@@ -166,14 +191,18 @@ std::size_t Graph<Vertex, Edge, Alloc>::esize() const
 }
 
 template <typename Vertex, typename Edge, template <typename> class Alloc>
-Vertex *Graph<Vertex, Edge, Alloc>::vertexAt(std::size_t i) const
+Vertex *Graph<Vertex, Edge, Alloc>::vertexAt(std::size_t i) const throw(OutOfRangeException)
 {
+    if(i < 0 || i >= v.size())
+        throw OutOfRangeException();
     return v[i]->vertex;
 }
 
 template <typename Vertex, typename Edge, template <typename> class Alloc>
-Edge *Graph<Vertex, Edge, Alloc>::edgeAt(std::size_t i) const
+Edge *Graph<Vertex, Edge, Alloc>::edgeAt(std::size_t i) const throw(OutOfRangeException)
 {
+    if(i < 0 || i >= e.size())
+        throw OutOfRangeException();
     return e[i]->edge;
 }
 
@@ -244,14 +273,18 @@ Vertex *Graph<Vertex, Edge>::vertexAtEdgeTo(const Edge &edge) const
 }*/
 
 template <typename Vertex, typename Edge, template <typename> class Alloc>
-std::size_t Graph<Vertex, Edge, Alloc>::vertexIndexFromEdgeIndex(std::size_t i) const
+std::size_t Graph<Vertex, Edge, Alloc>::vertexIndexFromEdgeIndex(std::size_t i) const throw(OutOfRangeException)
 {
+    if(i < 0 || i >= e.size())
+        throw OutOfRangeException();
     return e.at(i)->from;
 }
 
 template <typename Vertex, typename Edge, template <typename> class Alloc>
-std::size_t Graph<Vertex, Edge, Alloc>::vertexIndexToEdgeIndex(std::size_t i) const
+std::size_t Graph<Vertex, Edge, Alloc>::vertexIndexToEdgeIndex(std::size_t i) const throw(OutOfRangeException)
 {
+    if(i < 0 || i >= e.size())
+        throw OutOfRangeException();
     return e.at(i)->to;
 }
 
@@ -302,8 +335,6 @@ template <typename Vertex, typename Edge, template <typename> class Alloc>
 class Graph<Vertex, Edge, Alloc>::VertexCommunication
 {
 public:
-    typedef Vertex &reference;
-
     VertexCommunication();
     virtual ~VertexCommunication();
 
@@ -328,8 +359,6 @@ template <typename Vertex, typename Edge, template <typename> class Alloc>
 class Graph<Vertex, Edge, Alloc>::EdgeCommunication
 {
 public:
-    typedef Edge &reference;
-
     EdgeCommunication();
     virtual ~EdgeCommunication();
 

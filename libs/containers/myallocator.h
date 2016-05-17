@@ -2,6 +2,7 @@
 #define ALLOCATOR_H
 
 #include <bits/allocator.h>
+#include "myexception.h"
 
 template <typename T>
 class MyAllocator
@@ -15,7 +16,7 @@ public:
 
     MyAllocator();
 
-    pointer allocate(size_type _Count);
+    pointer allocate(size_type _Count) throw(AllocException);
     void deallocate(pointer _Ptr, size_type);
 };
 
@@ -24,13 +25,13 @@ MyAllocator<T>::MyAllocator()
 { }
 
 template <typename T>
-typename MyAllocator<T>::pointer MyAllocator<T>::allocate(size_type _Count)
+typename MyAllocator<T>::pointer MyAllocator<T>::allocate(size_type _Count) throw(AllocException)
 {
     void *_Ptr = 0;
 
     if (_Count != 0 && (((size_type)(-1) / sizeof(value_type) < _Count)
         || (_Ptr = ::operator new(_Count * sizeof (value_type))) == 0)) {
-        //throw bad_alloc();
+        throw AllocException();
     }
     return (pointer)_Ptr;
 }

@@ -2,6 +2,7 @@
 #include <iostream>
 #include <QEvent>
 #include <QMouseEvent>
+#include <QMessageBox>
 #include "qlibs/qgraphicschip.h"
 #include "qlibs/qgraphicsgrid.h"
 #include <math.h>
@@ -89,7 +90,13 @@ void QSchemeView::userDeleteItemChip()
         }
     }
     QGraphicsChip *item = (QGraphicsChip*)sender();
-    m_model->deleteItem(*item);
+    try {
+        m_model->deleteItem(*item);
+    } catch(std::exception &e) {
+        QMessageBox::critical(this, "Container exception", e.what());
+        updateModel();
+        return;
+    }
     scene->removeItem(item);
     for(QGraphicsWire twire : m_model->wires()) {
         QGraphicsWire *wire = new QGraphicsWire(twire);
@@ -102,7 +109,13 @@ void QSchemeView::userDeleteItemChip()
 void QSchemeView::userDeleteItemWire()
 {
     QGraphicsWire *item = (QGraphicsWire*)sender();
-    m_model->deleteWire(*item);
+    try {
+        m_model->deleteWire(*item);
+    } catch(std::exception &e) {
+        QMessageBox::critical(this, "Container exception", e.what());
+        updateModel();
+        return;
+    }
     scene->removeItem(item);
 }
 

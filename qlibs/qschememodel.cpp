@@ -35,6 +35,7 @@ QGraphicsChip QSchemeModel::addItem(const QGraphicsChip &chip)
 void QSchemeModel::deleteItem(const QGraphicsChip &chip)
 {
     m_electron->scheme()->deleteItem(*chip.boundItem());
+    //m_electron->scheme()->deleteItem(ElectronElement());
 }
 
 QGraphicsWire QSchemeModel::addWire(const QGraphicsWire &wire)
@@ -45,6 +46,7 @@ QGraphicsWire QSchemeModel::addWire(const QGraphicsWire &wire)
 void QSchemeModel::deleteWire(const QGraphicsWire &wire)
 {
     m_electron->scheme()->deleteWire(*wire.boundItem());
+    //m_electron->scheme()->deleteWire(ElectronWire());
 }
 
 void QSchemeModel::update()
