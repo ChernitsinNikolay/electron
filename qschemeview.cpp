@@ -43,6 +43,7 @@ void QSchemeView::updateModel()
         scene->addItem(chip);
         chip->setComplete();
         connect(chip, SIGNAL(deleteMe()), SLOT(userDeleteItemChip()));
+        connect(chip, SIGNAL(clickToContact(QPointF)), SLOT(wire(QPointF)));
     }
     for(QGraphicsWire twire : m_model->wires()) {
         QGraphicsWire *wire = new QGraphicsWire(twire);
