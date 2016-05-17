@@ -6,7 +6,7 @@
 
 //serial        +
 //deserial      +
-//iterator
+//iterator      +
 //allocator     +
 //algoritm
 //throw
@@ -15,9 +15,13 @@
 template <typename Vertex, typename Edge, template <typename> class Alloc = MyAllocator>
 class Graph
 {
+private:
+    class VertexCommunication;
+    class EdgeCommunication;
+
 public:
-    //typename std::vector<VertexCommunication>::const_iterator const_vertex_iterator;
-    //typename std::vector<EdgeCommunication>::const_iterator const_edge_iterator;
+    class iterator;
+    //class const_iterator;
 
     Graph();
     virtual ~Graph();
@@ -49,38 +53,20 @@ public:
     inline std::size_t vertexIndexFromEdgeIndex(std::size_t i) const;
     inline std::size_t vertexIndexToEdgeIndex(std::size_t i) const;
 
+    iterator begin();
+    //const_iterator begin() const;
+    iterator end();
+    //const_iterator end() const;
+
     void clear();
 
 private:
-    class VertexCommunication
-    {
-    public:
-        VertexCommunication();
-        virtual ~VertexCommunication();
+    typedef std::vector<VertexCommunication*, Alloc<VertexCommunication*>> vertex_container;
 
-    private:
-        std::vector<std::size_t> edgesIndex;
-        Vertex *vertex;
-
-        friend class Graph;
-    };
-
-    class EdgeCommunication
-    {
-    public:
-        EdgeCommunication();
-        virtual ~EdgeCommunication();
-
-    private:
-        std::size_t from;
-        std::size_t to;
-        Edge *edge;
-
-        friend class Graph;
-    };
-
-    std::vector<VertexCommunication*, Alloc<VertexCommunication*>> v;
+    vertex_container v;
     std::vector<EdgeCommunication*, Alloc<EdgeCommunication*>> e;
+
+    friend class iterator;
 };
 
 template <typename Vertex, typename Edge, template <typename> class Alloc>
@@ -270,6 +256,38 @@ std::size_t Graph<Vertex, Edge, Alloc>::vertexIndexToEdgeIndex(std::size_t i) co
 }
 
 template <typename Vertex, typename Edge, template <typename> class Alloc>
+typename Graph<Vertex, Edge, Alloc>::iterator Graph<Vertex, Edge, Alloc>::begin()
+{
+    iterator b;
+    b.m_iter = v.begin();
+    return b;
+}
+
+/*template <typename Vertex, typename Edge, template <typename> class Alloc>
+typename Graph<Vertex, Edge, Alloc>::const_iterator Graph<Vertex, Edge, Alloc>::begin() const
+{
+    const_iterator b;
+    b.m_iter = v.cbegin();
+    return b;
+}*/
+
+template <typename Vertex, typename Edge, template <typename> class Alloc>
+typename Graph<Vertex, Edge, Alloc>::iterator Graph<Vertex, Edge, Alloc>::end()
+{
+    iterator b;
+    b.m_iter = v.end();
+    return b;
+}
+
+/*template <typename Vertex, typename Edge, template <typename> class Alloc>
+typename Graph<Vertex, Edge, Alloc>::const_iterator Graph<Vertex, Edge, Alloc>::end() const
+{
+    const_iterator b;
+    b.m_iter = v.cend();
+    return b;
+}*/
+
+template <typename Vertex, typename Edge, template <typename> class Alloc>
 void Graph<Vertex, Edge, Alloc>::clear()
 {
     for(typename std::vector<VertexCommunication*, Alloc<VertexCommunication*>>::iterator iter = v.begin(); iter != v.end(); iter++)
@@ -281,12 +299,47 @@ void Graph<Vertex, Edge, Alloc>::clear()
 }
 
 template <typename Vertex, typename Edge, template <typename> class Alloc>
+class Graph<Vertex, Edge, Alloc>::VertexCommunication
+{
+public:
+    typedef Vertex &reference;
+
+    VertexCommunication();
+    virtual ~VertexCommunication();
+
+private:
+    std::vector<std::size_t> edgesIndex;
+    Vertex *vertex;
+
+    friend class Graph;
+    friend class Graph::iterator;
+};
+
+template <typename Vertex, typename Edge, template <typename> class Alloc>
 Graph<Vertex, Edge, Alloc>::VertexCommunication::VertexCommunication() :
     vertex(0) { }
 
 template <typename Vertex, typename Edge, template <typename> class Alloc>
 Graph<Vertex, Edge, Alloc>::VertexCommunication::~VertexCommunication()
 { delete vertex; }
+
+
+template <typename Vertex, typename Edge, template <typename> class Alloc>
+class Graph<Vertex, Edge, Alloc>::EdgeCommunication
+{
+public:
+    typedef Edge &reference;
+
+    EdgeCommunication();
+    virtual ~EdgeCommunication();
+
+private:
+    std::size_t from;
+    std::size_t to;
+    Edge *edge;
+
+    friend class Graph;
+};
 
 template <typename Vertex, typename Edge, template <typename> class Alloc>
 Graph<Vertex, Edge, Alloc>::EdgeCommunication::EdgeCommunication() :
@@ -295,5 +348,61 @@ Graph<Vertex, Edge, Alloc>::EdgeCommunication::EdgeCommunication() :
 template <typename Vertex, typename Edge, template <typename> class Alloc>
 Graph<Vertex, Edge, Alloc>::EdgeCommunication::~EdgeCommunication()
 { delete edge; }
+
+template <typename Vertex, typename Edge, template <typename> class Alloc>
+class Graph<Vertex, Edge, Alloc>::iterator
+{
+public:
+    iterator();
+    iterator(const iterator &iter);
+
+    iterator &operator=(const iterator &iter);
+    bool operator!=(const iterator &iter) const;
+
+    iterator &operator++();
+
+    Vertex &operator*() const;
+
+private:
+    typename Graph<Vertex, Edge, Alloc>::vertex_container::iterator m_iter;
+
+    friend class Graph;
+};
+
+template <typename Vertex, typename Edge, template <typename> class Alloc>
+Graph<Vertex, Edge, Alloc>::iterator::iterator()
+{ }
+
+template <typename Vertex, typename Edge, template <typename> class Alloc>
+Graph<Vertex, Edge, Alloc>::iterator::iterator(const iterator &iter)
+{
+    m_iter = iter.m_iter;
+}
+
+template <typename Vertex, typename Edge, template <typename> class Alloc>
+typename Graph<Vertex, Edge, Alloc>::iterator &Graph<Vertex, Edge, Alloc>::iterator::operator=(const iterator &iter)
+{
+    m_iter = iter.m_iter;
+    return *this;
+}
+
+template <typename Vertex, typename Edge, template <typename> class Alloc>
+bool Graph<Vertex, Edge, Alloc>::iterator::operator!=(const iterator &iter) const
+{
+    return m_iter != iter.m_iter;
+}
+
+template <typename Vertex, typename Edge, template <typename> class Alloc>
+typename Graph<Vertex, Edge, Alloc>::iterator &Graph<Vertex, Edge, Alloc>::iterator::operator++()
+{
+    ++m_iter;
+    return *this;
+}
+
+template <typename Vertex, typename Edge, template <typename> class Alloc>
+Vertex &Graph<Vertex, Edge, Alloc>::iterator::operator*() const
+{
+    return *(*m_iter)->vertex;
+}
 
 #endif // GRAPH_H

@@ -57,8 +57,8 @@ void ElectronScheme::saveToFile(const std::string &filename)
     file.write("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>");
     file.write("<scheme>");
     file.write("<vertexs>");
-    for(size_t i = 0; i < m_scheme.size(); i++) {
-        file.write(m_scheme.vertexAt(i)->toString().c_str());
+    for(_Graph::iterator iter = m_scheme.begin(); iter != m_scheme.end(); ++iter) {
+        file.write((*iter).toString().c_str());
     }
     file.write("</vertexs>");
     file.write("<edges>");

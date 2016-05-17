@@ -25,7 +25,8 @@ public:
     size_t csize() const;
 
 private:
-    Graph<ElectronElement, ElectronWire> m_scheme;
+    typedef Graph<ElectronElement, ElectronWire> _Graph;
+    _Graph m_scheme;
 };
 
 #endif // ELECTRONSCHEME_H
