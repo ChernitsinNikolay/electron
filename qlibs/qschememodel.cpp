@@ -8,7 +8,8 @@ QSchemeModel::QSchemeModel(QObject *parent, Electron *electron) :
 
 ElectronItem *QSchemeModel::current() const
 {
-    return m_electron->current();
+    ElectronItem *item = m_electron->current();
+    return item && item->isItem() ? item : 0;
 }
 
 QVector<QGraphicsChip> QSchemeModel::chips() const
@@ -47,6 +48,11 @@ void QSchemeModel::deleteWire(const QGraphicsWire &wire)
 {
     m_electron->scheme()->deleteWire(*wire.boundItem());
     //m_electron->scheme()->deleteWire(ElectronWire());
+}
+
+int QSchemeModel::size() const
+{
+    return m_electron->scheme()->size();
 }
 
 void QSchemeModel::update()

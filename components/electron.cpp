@@ -86,6 +86,7 @@ bool Electron::xmlParse()
                         ElectronImage image;
                         image.parse(iter, iter2 + 1);
                         ttree->value().setImage(image);
+                        ttree->value().setItem(true);
                         break;
                     }
                 }

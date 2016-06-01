@@ -21,6 +21,7 @@ public:
     void saveToFile(const std::string &filename);
     bool loadFromFile(const std::string &filename);
 
+    size_t size() const;
     size_t wsize() const;
     size_t csize() const;
 

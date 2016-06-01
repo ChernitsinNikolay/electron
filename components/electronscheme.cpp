@@ -180,6 +180,11 @@ bool ElectronScheme::loadFromFile(const std::string &filename)
     return false;
 }
 
+size_t ElectronScheme::size() const
+{
+    return csize() + wsize();
+}
+
 size_t ElectronScheme::wsize() const
 {
     return m_scheme.esize();

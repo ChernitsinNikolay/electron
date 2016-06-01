@@ -29,6 +29,7 @@ private:
     QSchemeModel *m_model;
     QGraphicsItem *m_current;
     QGraphicsWire *m_current_wire;
+    QGraphicsTextItem *m_text;
     float m_gridStep;
 };
 

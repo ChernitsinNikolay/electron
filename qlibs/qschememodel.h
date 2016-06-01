@@ -18,6 +18,7 @@ public:
     QVector<QGraphicsWire> wires() const;
     QGraphicsWire addWire(const QGraphicsWire &wire);
     void deleteWire(const QGraphicsWire &wire);
+    int size() const;
 
 signals:
     void updated();

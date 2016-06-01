@@ -16,13 +16,15 @@ public:
 
     ElectronElement(const std::vector<std::string>::iterator &begin, const std::vector<std::string>::iterator &end);
 
-    inline bool isItem() const { return true; } //TODO
+    inline bool isItem() const { return m_item; } //TODO
 
     inline void setName(const std::string &name) { m_name = name; }
     inline const std::string &name() const { return m_name; }
 
     inline void setImage(const ElectronImage &image) { m_image = image; }
     inline const ElectronImage &image() const { return m_image; }
+
+    inline void setItem(bool st = false) { m_item = st; }
 
     /*inline void setContact(const ElectronContact &contact) { m_contact = contact; }
     inline const ElectronContact &contact() const { return m_contact; }*/
@@ -42,6 +44,7 @@ private:
     ElectronImage m_image;
     //ElectronContact m_contact;
     int m_x, m_y;
+    bool m_item;
 
     friend bool operator==(const ElectronElement& left, const ElectronElement& right);
 };

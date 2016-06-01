@@ -8,9 +8,10 @@
 QGraphicsChip::QGraphicsChip(ElectronItem *item) :
     QGraphicsObject(NULL), m_eitem(item), selected_join(NULL), m_selected(false), m_complete(false), m_color(Qt::black)
 {
-    initial();
-    if(m_eitem)
+    if(m_eitem) {
+        initial();
         QGraphicsItem::setPos(m_eitem->posX(), m_eitem->posY());
+    }
     setScale(2);
     setAcceptHoverEvents(true);
     createContextMenu();
@@ -146,6 +147,8 @@ QPainterPath QGraphicsChip::shape() const
 
 void QGraphicsChip::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+    if(!m_eitem)
+        return;
     Q_UNUSED(widget);
     Q_UNUSED(option);
 

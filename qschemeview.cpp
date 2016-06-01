@@ -14,6 +14,7 @@ QSchemeView::QSchemeView(QWidget *parent) :
     setScene(scene);
     setMouseTracking(true);
     scene->addItem(new QGraphicsGrid(m_gridStep));
+    m_text = scene->addText("0");
 }
 
 QPointF QSchemeView::mapToGridScene(const QPoint &point) const
@@ -51,6 +52,7 @@ void QSchemeView::updateModel()
         scene->addItem(wire);
         connect(wire, SIGNAL(deleteMe()), SLOT(userDeleteItemWire()));
     }
+    m_text->setPlainText(QString::number(m_model->size()));
 }
 
 void QSchemeView::wire(const QPointF &point)
@@ -80,6 +82,7 @@ void QSchemeView::wire(const QPointF &point)
         m_current_wire = NULL;
         scene->update();
     }
+    m_text->setPlainText(QString::number(m_model->size()));
 }
 
 void QSchemeView::userDeleteItemChip()
@@ -104,6 +107,7 @@ void QSchemeView::userDeleteItemChip()
         connect(wire, SIGNAL(deleteMe()), SLOT(userDeleteItemWire()));
     }
     scene->update();
+    m_text->setPlainText(QString::number(m_model->size()));
 }
 
 void QSchemeView::userDeleteItemWire()
@@ -117,6 +121,7 @@ void QSchemeView::userDeleteItemWire()
         return;
     }
     scene->removeItem(item);
+    m_text->setPlainText(QString::number(m_model->size()));
 }
 
 void QSchemeView::mouseMoveEvent(QMouseEvent *event)
@@ -151,6 +156,7 @@ void QSchemeView::mousePressEvent(QMouseEvent *event)
             chip->setComplete();
             connect(chip, SIGNAL(clickToContact(QPointF)), SLOT(wire(QPointF)));
             scene->update();
+            m_text->setPlainText(QString::number(m_model->size()));
         } else {
             /*m_current = new QGraphicsChip(m_model->current());
             static_cast<QGraphicsChip*>(m_current)->setPos(event->pos());
@@ -194,8 +200,10 @@ bool QSchemeView::event(QEvent *event)
                 scene->removeItem(m_current);
                 scene->update();
             }
-            m_current = new QGraphicsChip(m_model->current());
-            scene->addItem(m_current);
+            if(m_model->current()) {
+                m_current = new QGraphicsChip(m_model->current());
+                scene->addItem(m_current);
+            }
         }
         break;
 

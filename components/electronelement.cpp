@@ -5,7 +5,7 @@ bool operator==(const ElectronElement& left, const ElectronElement& right){
 }
 
 ElectronElement::ElectronElement() :
-    m_x(0), m_y(0)
+    m_x(0), m_y(0), m_item(false)
 {
 }
 
@@ -15,6 +15,7 @@ ElectronElement::ElectronElement(const ElectronElement &item)
     m_image = item.m_image;
     m_x = item.m_x;
     m_y = item.m_y;
+    m_item = item.m_item;
 }
 
 ElectronElement &ElectronElement::operator=(const ElectronElement &item)
@@ -23,6 +24,7 @@ ElectronElement &ElectronElement::operator=(const ElectronElement &item)
     m_image = item.m_image;
     m_x = item.m_x;
     m_y = item.m_y;
+    m_item = item.m_item;
     return *this;
 }
 
@@ -52,6 +54,7 @@ ElectronElement::ElectronElement(const std::vector<std::string>::iterator &begin
             }
         }
     }
+    m_item = true;
 }
 
 void ElectronElement::rotate(float angle)
